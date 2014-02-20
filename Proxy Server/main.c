@@ -33,12 +33,6 @@ extern int errno;
 /// Message to send.
 char *msg = "ack";
 
-/// Prints out the usage for the CLI.
-void printUsage()
-{
-	perror("Usage: ./proxy-server port [filtered_out_prefixes_and_suffixes ...]");
-}
-
 int main(int argc, const char *argv[])
 {
 	// The port number to use for the socket.
@@ -48,7 +42,7 @@ int main(int argc, const char *argv[])
 		// Cannot convert int to unsigned short.
 		if ( conversion < 0 || conversion > USHRT_MAX ) {
 			perror("Invalid port");
-			printUsage();
+			perror("Usage: ./proxy-server port [filtered_out_prefixes_and_suffixes ...]");
 			exit(1);
 		}
 		// Assign the port value.
