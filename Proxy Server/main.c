@@ -63,6 +63,9 @@ int main(int argc, const char *argv[])
 	listen(sock, 5); // 5 is the number of backlogged waiting clients.
 	printf("Listener socket created and bound to port %d\n", port);
 	
+	int client_sockets[MAX_CLIENTS]; // Client socket fd list
+	int client_socket_index = 0;     // Next free spot
+	
 	while (true)
 	{
 		/** Add **/
@@ -75,9 +78,6 @@ int main(int argc, const char *argv[])
 		FD_ZERO(&readfds);
 		FD_SET(sock, &readfds);
 		printf("Set FD_SET to include listener fd %d\n", sock);
-		
-		int client_sockets[MAX_CLIENTS]; // Client socket fd list
-		int client_socket_index = 0;     // Next free spot
 		
 		for ( int i=0; i<client_socket_index; ++i ) {
 			FD_SET(client_sockets[i], &readfds);
