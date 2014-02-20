@@ -37,12 +37,12 @@ int main(int argc, const char *argv[])
 	// Create the listener socket as TCP socket.
 	// (use SOCK_DGRAM for UDP)
 	int sock = socket(PF_INET, SOCK_STREAM, 0);
-	
 	if ( sock < 0 ) {
 		perror("socket()");
 		exit(1);
 	}
 	
+	// Create the server.
 	struct sockaddr_in server;
 	server.sin_family = PF_INET;
 	server.sin_addr.s_addr = INADDR_ANY;
@@ -57,9 +57,10 @@ int main(int argc, const char *argv[])
 		exit(1);
 	}
 	
+	// Create the client.
 	struct sockaddr_in client;
 	unsigned int fromlen = sizeof(client);
-	listen(sock, 5);  // 5 is the number of backlogged waiting clients.
+	listen(sock, 5); // 5 is the number of backlogged waiting clients.
 	printf("Listener socket created and bound to port %d\n", port);
 	
 	while (true)
@@ -104,7 +105,7 @@ int main(int argc, const char *argv[])
 			client_sockets[client_socket_index++] = newsock;
 		}
 		
-		for ( q = 0 ; q < client_socket_index ; q++ ) {
+		for ( q=0; q<client_socket_index; q++ ) {
 			int fd = client_sockets[q];
 			if ( FD_ISSET(fd, &readfds) ) {
 				char buffer[BUFFER_SIZE];
@@ -138,7 +139,7 @@ int main(int argc, const char *argv[])
 		}
 	}
 	
-	// We never get here
+	// We'll never get here.
 	return 0;
 }
 
