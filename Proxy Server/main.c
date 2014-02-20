@@ -24,7 +24,11 @@ extern int errno;
 #define BUFFER_SIZE 1024
 #define MAX_CLIENTS 100
 
+/// Message to send.
 char *msg = "ack";
+
+/// The port number to use for the socket.
+const unsigned short port = 8127;
 
 int main(int argc, const char *argv[])
 {
@@ -32,9 +36,7 @@ int main(int argc, const char *argv[])
 	int client_sockets[MAX_CLIENTS]; // Client socket fd list
 	int client_socket_index = 0;     // Next free spot
 	
-	unsigned short port = 8127;
-	
-	// Create the listener socket as TCP socket
+	// Create the listener socket as TCP socket.
 	// (use SOCK_DGRAM for UDP)
 	int sock = socket(PF_INET, SOCK_STREAM, 0);
 	
@@ -48,7 +50,7 @@ int main(int argc, const char *argv[])
 	server.sin_addr.s_addr = INADDR_ANY;
 	
 	// htons() is host-to-network-short for marshalling
-	// Internet is "big endian"; Intel is "little endian"
+	// Internet is "big endian"; Intel is "little endian".
 	server.sin_port = htons(port);
 	int len = sizeof(server);
 	
@@ -59,7 +61,7 @@ int main(int argc, const char *argv[])
 	
 	struct sockaddr_in client;
 	unsigned int fromlen = sizeof(client);
-	listen(sock, 5);  // 5 is number of backlogged waiting clients
+	listen(sock, 5);  // 5 is the number of backlogged waiting clients.
 	printf("Listener socket created and bound to port %d\n", port);
 	
 	while (1)
@@ -95,7 +97,7 @@ int main(int argc, const char *argv[])
 		/** A **/
 		
 		if ( FD_ISSET(sock, &readfds) ) {
-			/* we know that this accept() call will NOT block */
+			// We know that this accept() call will NOT block.
 			int newsock = accept(sock, (struct sockaddr *)&client, &fromlen);
 			printf("Accepted client connection\n");
 			client_sockets[client_socket_index++] = newsock;
@@ -109,10 +111,10 @@ int main(int argc, const char *argv[])
 				if ( n == 0 ) {
 					int k;
 					printf("Client on fd %d closed connection\n", fd);
-					// remove fd from client_sockets[] array:
+					// Remove fd from client_sockets[] array:
 					for ( k = 0 ; k < client_socket_index ; k++ ) {
 						if ( fd == client_sockets[k] ) {
-							/* found it -- copy remaining elements over fd */
+							// Found it -- copy remaining elements over fd
 							int m;
 							for ( m = k; m < client_socket_index - 1; m++ ) {
 								client_sockets[m] = client_sockets[m+1];
