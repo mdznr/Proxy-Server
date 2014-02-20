@@ -47,7 +47,7 @@ int main(int argc, const char *argv[])
 	server.sin_family = PF_INET;
 	server.sin_addr.s_addr = INADDR_ANY;
 	
-	// htons() is host-to-network-short for marshalling
+	// htons() is host-to-network-short for marshalling.
 	// Internet is "big endian"; Intel is "little endian".
 	server.sin_port = htons(port);
 	int len = sizeof(server);
@@ -79,24 +79,17 @@ int main(int argc, const char *argv[])
 		int client_sockets[MAX_CLIENTS]; // Client socket fd list
 		int client_socket_index = 0;     // Next free spot
 		
-		int q = 0;
-		for ( ; q<client_socket_index ; q++ ) {
-			FD_SET(client_sockets[q], &readfds);
-			printf("Set FD_SET to include client socket fd %d\n", client_sockets[q]);
+		for ( int i=0; i<client_socket_index; ++i ) {
+			FD_SET(client_sockets[i], &readfds);
+			printf("Set FD_SET to include client socket fd %d\n", client_sockets[i]);
 		}
 		
-#if 0
-		// BLOCK
-		q = select(FD_SETSIZE, &readfds, NULL, NULL, NULL); // q is the number of ready file descriptors
-#endif
-		
-		/** A **/
-		q = select(FD_SETSIZE, &readfds, NULL, NULL, &timeout);
+		// The number of ready file descriptors
+		int q = select(FD_SETSIZE, &readfds, NULL, NULL, &timeout);
 		if ( q == 0 ) {
 			printf("No activity\n");
 			continue;
 		}
-		/** A **/
 		
 		if ( FD_ISSET(sock, &readfds) ) {
 			// We know that this accept() call will NOT block.
@@ -105,8 +98,8 @@ int main(int argc, const char *argv[])
 			client_sockets[client_socket_index++] = newsock;
 		}
 		
-		for ( q=0; q<client_socket_index; q++ ) {
-			int fd = client_sockets[q];
+		for ( int i=0; i<client_socket_index; ++i ) {
+			int fd = client_sockets[i];
 			if ( FD_ISSET(fd, &readfds) ) {
 				char buffer[BUFFER_SIZE];
 				ssize_t n = recv(fd, buffer, BUFFER_SIZE - 1, 0);
@@ -118,7 +111,7 @@ int main(int argc, const char *argv[])
 						if ( fd == client_sockets[k] ) {
 							// Found it -- copy remaining elements over fd
 							int m;
-							for ( m = k; m < client_socket_index - 1; m++ ) {
+							for ( m = k; m < client_socket_index-1; m++ ) {
 								client_sockets[m] = client_sockets[m+1];
 							}
 							client_socket_index--;
