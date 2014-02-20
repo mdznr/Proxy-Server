@@ -28,6 +28,7 @@
 		C9DFC73E18B652F300C551ED /* Proxy Server */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "Proxy Server"; sourceTree = BUILT_PRODUCTS_DIR; };
 		C9DFC74118B652F300C551ED /* main.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
 		C9DFC74318B652F300C551ED /* Proxy_Server.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = Proxy_Server.1; sourceTree = "<group>"; };
+		C9DFC74A18B6590100C551ED /* Boolean.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Boolean.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -61,6 +62,7 @@
 			isa = PBXGroup;
 			children = (
 				C9DFC74118B652F300C551ED /* main.c */,
+				C9DFC74A18B6590100C551ED /* Boolean.h */,
 				C9DFC74318B652F300C551ED /* Proxy_Server.1 */,
 			);
 			path = "Proxy Server";

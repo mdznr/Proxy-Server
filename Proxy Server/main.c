@@ -19,6 +19,8 @@
 #include <sys/socket.h>
 #include <sys/types.h>
 
+#include "Boolean.h"
+
 extern int errno;
 
 #define BUFFER_SIZE 1024
@@ -60,7 +62,7 @@ int main(int argc, const char *argv[])
 	listen(sock, 5);  // 5 is the number of backlogged waiting clients.
 	printf("Listener socket created and bound to port %d\n", port);
 	
-	while (1)
+	while (true)
 	{
 		/** Add **/
 		struct timeval timeout;
