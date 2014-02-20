@@ -8,6 +8,8 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+
+#include <limits.h>
 #include <string.h>
 #include <unistd.h>
 
@@ -29,13 +31,43 @@ extern int errno;
 /// Message to send.
 char *msg = "ack";
 
-/// The port number to use for the socket.
-const unsigned short port = 8127;
+/// Prints out the usage for the CLI.
+void printUsage()
+{
+	perror("Usage: ./proxy-server port [filtered_out_prefixes_and_suffixes ...]");
+}
 
 int main(int argc, const char *argv[])
 {
-	// Create the listener socket as TCP socket.
-	// (use SOCK_DGRAM for UDP)
+	// Handle arguments early.
+	
+	// The port number to use for the socket.
+	unsigned short port = 8127; // The default port is 8127 (if no arguments are given).
+	if ( argc > 1 ) {
+		int conversion = atoi(argv[1]);
+		// Cannot convert int to unsigned short.
+		if ( conversion < 0 || conversion > USHRT_MAX ) {
+			perror("Invalid port");
+			printUsage();
+			exit(1);
+		}
+		// Assign the port value.
+		port = (unsigned short) conversion;
+	}
+	
+	// All of the prefixes/suffixes to filter out
+	unsigned int numberOfFilters = 0;
+	const char **filters;
+	// Contains at least one filter.
+	if ( argc > 2 ) {
+		numberOfFilters = argc - 2;
+		filters = (const char **) malloc(sizeof(const char *) * numberOfFilters);
+		for ( int i=0; i<numberOfFilters; ++i ) {
+			filters[i] = argv[i+2];
+		}
+	}
+	
+	// Create the listener socket as TCP socket. (use SOCK_DGRAM for UDP)
 	int sock = socket(PF_INET, SOCK_STREAM, 0);
 	if ( sock < 0 ) {
 		perror("socket()");
@@ -63,8 +95,12 @@ int main(int argc, const char *argv[])
 	listen(sock, 5); // 5 is the number of backlogged waiting clients.
 	printf("Listener socket created and bound to port %d\n", port);
 	
+	// Client sockets
 	int client_sockets[MAX_CLIENTS]; // Client socket fd list
 	int client_socket_index = 0;     // Next free spot
+	
+	// Buffer for receiving messages
+	char buffer[BUFFER_SIZE];
 	
 	while (true)
 	{
@@ -101,7 +137,7 @@ int main(int argc, const char *argv[])
 		for ( int i=0; i<client_socket_index; ++i ) {
 			int fd = client_sockets[i];
 			if ( FD_ISSET(fd, &readfds) ) {
-				char buffer[BUFFER_SIZE];
+				
 				ssize_t n = recv(fd, buffer, BUFFER_SIZE - 1, 0);
 				if ( n == 0 ) {
 					int k;
