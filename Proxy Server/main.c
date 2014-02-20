@@ -32,10 +32,6 @@ const unsigned short port = 8127;
 
 int main(int argc, const char *argv[])
 {
-	fd_set readfds;
-	int client_sockets[MAX_CLIENTS]; // Client socket fd list
-	int client_socket_index = 0;     // Next free spot
-	
 	// Create the listener socket as TCP socket.
 	// (use SOCK_DGRAM for UDP)
 	int sock = socket(PF_INET, SOCK_STREAM, 0);
@@ -66,19 +62,22 @@ int main(int argc, const char *argv[])
 	
 	while (1)
 	{
-		int q;
-		
 		/** Add **/
 		struct timeval timeout;
 		timeout.tv_sec = 3;
 		timeout.tv_usec = 500;  // AND 500 microseconds
 		/** Add **/
 		
+		fd_set readfds;
 		FD_ZERO(&readfds);
 		FD_SET(sock, &readfds);
 		printf("Set FD_SET to include listener fd %d\n", sock);
 		
-		for ( q = 0 ; q < client_socket_index ; q++ ) {
+		int client_sockets[MAX_CLIENTS]; // Client socket fd list
+		int client_socket_index = 0;     // Next free spot
+		
+		int q = 0;
+		for ( ; q<client_socket_index ; q++ ) {
 			FD_SET(client_sockets[q], &readfds);
 			printf("Set FD_SET to include client socket fd %d\n", client_sockets[q]);
 		}
@@ -90,7 +89,7 @@ int main(int argc, const char *argv[])
 		
 		/** A **/
 		q = select(FD_SETSIZE, &readfds, NULL, NULL, &timeout);
-		if (q == 0) {
+		if ( q == 0 ) {
 			printf("No activity\n");
 			continue;
 		}
