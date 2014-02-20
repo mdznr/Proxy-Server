@@ -28,6 +28,8 @@ extern int errno;
 #define BUFFER_SIZE 1024
 #define MAX_CLIENTS 100
 
+#define START_INDEX_FILTERS 2
+
 /// Message to send.
 char *msg = "ack";
 
@@ -39,8 +41,6 @@ void printUsage()
 
 int main(int argc, const char *argv[])
 {
-	// Handle arguments early.
-	
 	// The port number to use for the socket.
 	unsigned short port = 8127; // The default port is 8127 (if no arguments are given).
 	if ( argc > 1 ) {
@@ -59,12 +59,11 @@ int main(int argc, const char *argv[])
 	unsigned int numberOfFilters = 0;
 	const char **filters;
 	// Contains at least one filter.
-	if ( argc > 2 ) {
-		numberOfFilters = argc - 2;
-		filters = (const char **) malloc(sizeof(const char *) * numberOfFilters);
-		for ( int i=0; i<numberOfFilters; ++i ) {
-			filters[i] = argv[i+2];
-		}
+	if ( argc > START_INDEX_FILTERS ) {
+		// Filters are START_INDEX_FILTERS less than the number of arguments to the program.
+		numberOfFilters = argc - START_INDEX_FILTERS;
+		// Create a pointer to the start of the filters in argv.
+		filters = &argv[START_INDEX_FILTERS];
 	}
 	
 	// Create the listener socket as TCP socket. (use SOCK_DGRAM for UDP)
