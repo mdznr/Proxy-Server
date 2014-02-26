@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		C9DFC74218B652F300C551ED /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = C9DFC74118B652F300C551ED /* main.c */; };
 		C9DFC74418B652F300C551ED /* Proxy_Server.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = C9DFC74318B652F300C551ED /* Proxy_Server.1 */; };
+		C9DFC74D18B667BE00C551ED /* SignalHandling.c in Sources */ = {isa = PBXBuildFile; fileRef = C9DFC74C18B667BE00C551ED /* SignalHandling.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -29,6 +30,8 @@
 		C9DFC74118B652F300C551ED /* main.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
 		C9DFC74318B652F300C551ED /* Proxy_Server.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = Proxy_Server.1; sourceTree = "<group>"; };
 		C9DFC74A18B6590100C551ED /* Boolean.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Boolean.h; sourceTree = "<group>"; };
+		C9DFC74B18B667A500C551ED /* SignalHandling.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SignalHandling.h; sourceTree = "<group>"; };
+		C9DFC74C18B667BE00C551ED /* SignalHandling.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = SignalHandling.c; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -63,6 +66,8 @@
 			children = (
 				C9DFC74118B652F300C551ED /* main.c */,
 				C9DFC74A18B6590100C551ED /* Boolean.h */,
+				C9DFC74B18B667A500C551ED /* SignalHandling.h */,
+				C9DFC74C18B667BE00C551ED /* SignalHandling.c */,
 				C9DFC74318B652F300C551ED /* Proxy_Server.1 */,
 			);
 			path = "Proxy Server";
@@ -119,6 +124,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C9DFC74D18B667BE00C551ED /* SignalHandling.c in Sources */,
 				C9DFC74218B652F300C551ED /* main.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -22,6 +22,7 @@
 #include <sys/types.h>
 
 #include "Boolean.h"
+#include "SignalHandling.h"
 
 extern int errno;
 
@@ -35,6 +36,16 @@ char *msg = "ack";
 
 int main(int argc, const char *argv[])
 {
+	// Default behaviour.
+//	signal(SIGINT, SIG_DFL);
+	// Ignore the signal.
+//	signal(SIGINT, SIG_IGN);
+	
+	// Set up signal handler via signal().
+	signal(SIGINT, &handleSignal);
+	signal(SIGUSR1, &handleSIGUSR1);
+	signal(SIGUSR2, &handleSIGUSR2);
+	
 	// The port number to use for the socket.
 	unsigned short port = 8127; // The default port is 8127 (if no arguments are given).
 	if ( argc > 1 ) {
@@ -42,7 +53,7 @@ int main(int argc, const char *argv[])
 		// Cannot convert int to unsigned short.
 		if ( conversion < 0 || conversion > USHRT_MAX ) {
 			perror("Invalid port");
-			perror("Usage: ./proxy-server port [filtered_out_prefixes_and_suffixes ...]");
+			perror("Usage: ./proxy port [filtered_out_prefixes_and_suffixes ...]");
 			exit(1);
 		}
 		// Assign the port value.
@@ -162,7 +173,5 @@ int main(int argc, const char *argv[])
 	}
 	
 	// We'll never get here.
-	return 0;
+	return EXIT_SUCCESS;
 }
-
-
