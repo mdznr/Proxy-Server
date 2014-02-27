@@ -26,6 +26,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		C9312E3018BF96AF00533CBE /* MutexLock.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MutexLock.h; sourceTree = "<group>"; };
 		C9DFC73E18B652F300C551ED /* Proxy Server */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "Proxy Server"; sourceTree = BUILT_PRODUCTS_DIR; };
 		C9DFC74118B652F300C551ED /* main.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
 		C9DFC74318B652F300C551ED /* Proxy_Server.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = Proxy_Server.1; sourceTree = "<group>"; };
@@ -66,6 +67,7 @@
 			children = (
 				C9DFC74118B652F300C551ED /* main.c */,
 				C9DFC74A18B6590100C551ED /* Boolean.h */,
+				C9312E3018BF96AF00533CBE /* MutexLock.h */,
 				C9DFC74B18B667A500C551ED /* SignalHandling.h */,
 				C9DFC74C18B667BE00C551ED /* SignalHandling.c */,
 				C9DFC74318B652F300C551ED /* Proxy_Server.1 */,
@@ -235,6 +237,7 @@
 				C9DFC74918B652F300C551ED /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
