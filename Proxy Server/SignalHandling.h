@@ -11,10 +11,6 @@
 
 #include <signal.h>
 
-/// Handle a signal.
-/// @param n The signal value to handle.
-void handleSignal(int n);
-
 /// Handle user-defined signal 1.
 void handleSIGUSR1();
 

@@ -10,12 +10,6 @@
 
 #include "SignalHandling.h"
 
-void handleSignal(int n)
-{
-#warning TODO: Implement handleSignal()
-	printf("Received signal %d\n", n);
-}
-
 /*
  When your server receives a SIGUSR1 signal, your server should output a summary of what
  prefixes/suffixes it is filtering, as well as the set of statistics shown in the example below:
