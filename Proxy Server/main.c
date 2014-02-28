@@ -16,12 +16,15 @@
 #include <arpa/inet.h>
 #include <netinet/in.h>
 
+#include <pthread.h>
+
 #include <sys/errno.h>
 #include <sys/select.h>
 #include <sys/socket.h>
 #include <sys/types.h>
 
 #include "Boolean.h"
+#include "MutexLock.h"
 #include "SignalHandling.h"
 
 extern int errno;
@@ -36,15 +39,10 @@ char *msg = "ack";
 
 int main(int argc, const char *argv[])
 {
-	// Default behaviour.
-//	signal(SIGINT, SIG_DFL);
-	// Ignore the signal.
-//	signal(SIGINT, SIG_IGN);
-	
 	// Set up signal handler via signal().
-	signal(SIGINT, &handleSignal);
 	signal(SIGUSR1, &handleSIGUSR1);
 	signal(SIGUSR2, &handleSIGUSR2);
+//	signal(SIGCHLD, &kill_zombies);
 	
 	// The port number to use for the socket.
 	unsigned short port = 8127; // The default port is 8127 (if no arguments are given).
@@ -108,11 +106,9 @@ int main(int argc, const char *argv[])
 	
 	while (true)
 	{
-		/** Add **/
 		struct timeval timeout;
 		timeout.tv_sec = 3;
 		timeout.tv_usec = 500;  // AND 500 microseconds
-		/** Add **/
 		
 		fd_set readfds;
 		FD_ZERO(&readfds);
@@ -141,31 +137,33 @@ int main(int argc, const char *argv[])
 		for ( int i=0; i<client_socket_index; ++i ) {
 			int fd = client_sockets[i];
 			if ( FD_ISSET(fd, &readfds) ) {
-				
 				ssize_t n = recv(fd, buffer, BUFFER_SIZE - 1, 0);
 				if ( n == 0 ) {
 					int k;
 					printf("Client on fd %d closed connection\n", fd);
 					// Remove fd from client_sockets[] array:
-					for ( k = 0 ; k < client_socket_index ; k++ ) {
+					for ( k=0; k<client_socket_index; k++ ) {
 						if ( fd == client_sockets[k] ) {
 							// Found it -- copy remaining elements over fd
-							int m;
-							for ( m = k; m < client_socket_index-1; m++ ) {
+							for ( int m=k; m<client_socket_index-1; m++ ) {
 								client_sockets[m] = client_sockets[m+1];
 							}
 							client_socket_index--;
 							break;  // All done
 						}
 					}
+					// TODO: Close thread
 				} else if ( n < 0 ) {
 					perror("recv()");
+					// TODO: Close thread?
 				} else {
 					buffer[n] = '\0';
 					printf("Received message from fd %d: %s\n", fd, buffer);
 					n = send(fd, msg, strlen(msg), 0);
 					if ( n < strlen(msg) ) {
 						perror("send()");
+					} else {
+						// TODO: Create thread
 					}
 				}
 			}
