@@ -31,11 +31,23 @@ extern int errno;
 
 #define BUFFER_SIZE 1024
 #define MAX_CLIENTS 100
+#define MAX_THREADS 100
 
 #define START_INDEX_FILTERS 2
 
 /// Message to send.
 char *msg = "ack";
+
+void *processMessage(void *arg)
+{
+	char *message = (char *)arg;
+	printf("Processing Message\n");
+	
+	// Use this to return message back to calling thread and terminate.
+	pthread_exit(NULL);
+	
+	return NULL;
+}
 
 int main(int argc, const char *argv[])
 {
@@ -104,6 +116,9 @@ int main(int argc, const char *argv[])
 	// Buffer for receiving messages
 	char buffer[BUFFER_SIZE];
 	
+	// Threads
+	pthread_t tid[MAX_THREADS];
+	
 	while (true)
 	{
 		struct timeval timeout;
@@ -113,17 +128,17 @@ int main(int argc, const char *argv[])
 		fd_set readfds;
 		FD_ZERO(&readfds);
 		FD_SET(sock, &readfds);
-		printf("Set FD_SET to include listener fd %d\n", sock);
+		//printf("Set FD_SET to include listener fd %d\n", sock);
 		
 		for ( int i=0; i<client_socket_index; ++i ) {
 			FD_SET(client_sockets[i], &readfds);
-			printf("Set FD_SET to include client socket fd %d\n", client_sockets[i]);
+			//printf("Set FD_SET to include client socket fd %d\n", client_sockets[i]);
 		}
 		
 		// The number of ready file descriptors
 		int q = select(FD_SETSIZE, &readfds, NULL, NULL, &timeout);
 		if ( q == 0 ) {
-			printf("No activity\n");
+			//printf("No activity\n");
 			continue;
 		}
 		
@@ -164,6 +179,9 @@ int main(int argc, const char *argv[])
 						perror("send()");
 					} else {
 						// TODO: Create thread
+						if ( pthread_create(&tid[i], NULL, processMessage, (void *) buffer) != 0 ) {
+							perror( "Could not create thread" );
+						}
 					}
 				}
 			}
