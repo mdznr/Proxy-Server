@@ -27,6 +27,7 @@
 #include "MutexLock.h"
 #include "RequestHandling.h"
 #include "SignalHandling.h"
+#include "StringFunctions.h"
 
 extern int errno;
 
@@ -45,6 +46,39 @@ const char **filters;
 
 int main(int argc, const char *argv[])
 {
+#warning This is just a test.
+	char *request = "GET http://stackoverflow.com/questions/18183633/string-parsing-in-c-using-strtok HTTP/1.1\r\nHost: stackoverflow.com\r\nAccept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8\r\nPragma: no-cache\r\nConnection: keep-alive\r\nProxy-Connection: keep-alive\r\nCookie: __qca=P0-411423666-1383243503829; __utma=140029553.441791018.1383243504.1389471284.1389595028.126; __utmz=140029553.1389471284.125.73.utmcsr=duckduckgo.com|utmccn=(referral)|utmcmd=referral|utmcct=/; _ga=GA1.2.441791018.1383243504; sgt=id=51d9348c-b86f-4197-8309-6b750d69b238; usr=t=FecSPNNOLkO6&s=y5ID6CONs0yz\r\nUser-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.74.9 (KHTML, like Gecko) Version/7.0.2 Safari/537.74.9\r\nAccept-Language: en-us\r\nCache-Control: max-age=0\r\nAccept-Encoding: gzip, deflate\r\n\r\n";
+	
+	// Start the parsing at the beginning of the request.
+	char *parse = request;
+	static const char * const delimiter = "\r\n";
+	for ( int i=0; i<HTTPRequestHeaderFieldsCount; ++i ) {
+		
+		// Find the end of the line.
+		char *next = strstr(parse, delimiter);
+		
+		// Get just the line.
+		char *line = substr(parse, next);
+		
+		// Advance the parse pointer to the end of the line, and after the delimiter.
+		parse = next + strlen(delimiter);
+		
+		// Stop when at the end of the header.
+		if ( line == NULL ) {
+			break;
+		}
+		
+		// Print the line, for debugging.
+		printf("%s\n", line);
+	}
+	
+	
+	return EXIT_SUCCESS;
+	
+	
+	
+	
+	
 	// Set up signal handler via signal().
 	signal(SIGUSR1, &handleSIGUSR1);
 	signal(SIGUSR2, &handleSIGUSR2);
