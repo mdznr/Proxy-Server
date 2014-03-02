@@ -25,6 +25,7 @@
 
 #include "Boolean.h"
 #include "MutexLock.h"
+#include "RequestHandling.h"
 #include "SignalHandling.h"
 
 extern int errno;
@@ -38,16 +39,9 @@ extern int errno;
 /// Message to send.
 char *msg = "ack";
 
-void *processMessage(void *arg)
-{
-	char *message = (char *)arg;
-	printf("Processing Message\n");
-	
-	// Use this to return message back to calling thread and terminate.
-	pthread_exit(NULL);
-	
-	return NULL;
-}
+/// The filters to ignore.
+/// @discussion Filters out any request to a server that starts or ends with the filter string.
+const char **filters;
 
 int main(int argc, const char *argv[])
 {
@@ -72,7 +66,6 @@ int main(int argc, const char *argv[])
 	
 	// All of the prefixes/suffixes to filter out
 	unsigned int numberOfFilters = 0;
-	const char **filters;
 	// Contains at least one filter.
 	if ( argc > START_INDEX_FILTERS ) {
 		// Filters are START_INDEX_FILTERS less than the number of arguments to the program.
@@ -128,11 +121,11 @@ int main(int argc, const char *argv[])
 		fd_set readfds;
 		FD_ZERO(&readfds);
 		FD_SET(sock, &readfds);
-		//printf("Set FD_SET to include listener fd %d\n", sock);
+//		printf("Set FD_SET to include listener fd %d\n", sock);
 		
 		for ( int i=0; i<client_socket_index; ++i ) {
 			FD_SET(client_sockets[i], &readfds);
-			//printf("Set FD_SET to include client socket fd %d\n", client_sockets[i]);
+//			printf("Set FD_SET to include client socket fd %d\n", client_sockets[i]);
 		}
 		
 		// The number of ready file descriptors
@@ -178,8 +171,8 @@ int main(int argc, const char *argv[])
 					if ( n < strlen(msg) ) {
 						perror("send()");
 					} else {
-						// TODO: Create thread
-						if ( pthread_create(&tid[i], NULL, processMessage, (void *) buffer) != 0 ) {
+						// Create thread to handle message.
+						if ( pthread_create(&tid[i], NULL, handleRequest, (void *) buffer) != 0 ) {
 							perror( "Could not create thread" );
 						}
 					}
