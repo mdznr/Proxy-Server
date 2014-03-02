@@ -9,6 +9,8 @@
 #ifndef Proxy_Server_StringFunctions_h
 #define Proxy_Server_StringFunctions_h
 
+#include "Boolean.h"
+
 /// Test the equality of two strings.
 /// @param s1 The first string.
 /// @param s2 The second string.
