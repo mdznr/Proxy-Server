@@ -49,6 +49,7 @@ char *prefixOfStringUpUntilString(const char *string, const char *substring);
 /// @param delimiter The delimiter to split on the first occurance of in @c fullString.
 /// @param firstString Will be the part of @c fullString that appears before @c delimiter.
 /// @param secondString Will be the part of @c secondString that appears after @c delimiter.
-void splitStringAtString(const char *fullString, const char *delimiter, char **firstString, char **secondString);
+/// @return Whether or not the split was successful.
+bool splitStringAtString(const char *fullString, const char *delimiter, char **firstString, char **secondString);
 
 #endif

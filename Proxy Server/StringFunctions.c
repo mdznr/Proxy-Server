@@ -77,14 +77,14 @@ char *prefixOfStringUpUntilString(const char *string, const char *substring)
 	return prefix;
 }
 
-void splitStringAtString(const char *fullString, const char *delimiter, char **firstString, char **secondString)
+bool splitStringAtString(const char *fullString, const char *delimiter, char **firstString, char **secondString)
 {
 	// Find the delimiter in the full string.
 	char *occurance = strstr(fullString, delimiter);
 	
 	// Cannot continue if the delimiter is not in full string.
 	if ( occurance == NULL ) {
-		return;
+		return false;
 	}
 	
 	// First string is up until the occurance of the delimiter.
@@ -92,4 +92,6 @@ void splitStringAtString(const char *fullString, const char *delimiter, char **f
 	
 	// The second string is after the occurance of the delimiter.
 	*secondString = strdup(occurance + strlen(delimiter));
+	
+	return true;
 }
