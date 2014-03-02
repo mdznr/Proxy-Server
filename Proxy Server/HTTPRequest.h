@@ -22,6 +22,11 @@ HTTPRequest HTTPRequestCreate();
 /// Deallocate an instance of HTTPRequest.
 void HTTPRequestFree(HTTPRequest request);
 
+/// Validate an instance of HTTPRequest.
+/// @param request The HTTPRequest to validate.
+/// Whether or not the request is valid.
+bool validateRequest(HTTPRequest request);
+
 /// A header field name for an HTTP Request.
 typedef const char * const HTTPRequestHeaderFieldName;
 

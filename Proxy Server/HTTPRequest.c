@@ -34,6 +34,50 @@ void HTTPRequestFree(HTTPRequest request)
 	free(request);
 }
 
+bool validateRequest(HTTPRequest request)
+{
+	/*
+	 Request-Line specifications via http://www.w3.org/Protocols/rfc2616/rfc2616-sec5.html
+	 Request-Line = Method SP Request-URI SP HTTP-Version CRLF
+	 */
+	
+	char *Request_Line = request[HTTPRequestHeaderField_Request_Line];
+	char *Request_URI = NULL;
+	char *HTTP_Version = NULL;
+	bool split = splitStringAtString(Request_Line, " ", &Request_URI, &HTTP_Version);
+	if ( !split ) {
+		// Invalid Request-Line.
+		return false;
+	}
+	
+	// TODO: Check if valid Request-URI.
+	
+	// Check if supported HTTP-Version.
+	if ( stringEquality(HTTP_Version, "HTTP/1.1") ) {
+		// HTTP/1.1 is supported.
+	} else if ( stringEquality(HTTP_Version, "HTTP/1.0") ) {
+		// HTTP/1.0 is supported.
+	} else {
+		// Unsupported or invalid HTTP-Version.
+		return false;
+	}
+	
+	// Must include Host.
+	if ( request[HTTPRequestHeaderField_Host] == NULL ) {
+		return false;
+	}
+	
+	// If POST, must include Content-Length.
+	if ( stringEquality(request[HTTPRequestHeaderField_Request_Line], "POST") ) {
+		if ( request[HTTPRequestHeaderField_Content_Length] == NULL ) {
+			return false;
+		}
+	}
+	
+	// No errors are found.
+	return true;
+}
+
 HTTPRequestHeaderField HTTPRequestHeaderFieldForFieldNamed(HTTPRequestHeaderFieldName fieldName)
 {
 	if ( stringEquality(fieldName, HTTPRequestHeaderFieldName_Accept) ) {
