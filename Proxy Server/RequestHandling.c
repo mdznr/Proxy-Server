@@ -17,7 +17,7 @@
 /// Parse an HTTP request.
 /// @param request The HTTP request.
 /// @return The parsed HTTP request.
-HTTPRequest processRequest(char *request);
+HTTPRequest processRequest(char *requestString);
 
 /// Determine whether a request should be filtered out or not.
 /// @param request The HTTP request.
@@ -54,7 +54,7 @@ void *handleRequest(void *arg)
 
 #pragma mark - Private API (Implementation)
 
-HTTPRequest processRequest(char *request)
+HTTPRequest processRequest(char *requestString)
 {
 	printf("Processing Request\n");
 	
