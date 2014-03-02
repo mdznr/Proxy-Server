@@ -58,6 +58,10 @@ HTTPRequest processRequest(char *requestString)
 {
 	printf("Processing Request\n");
 	
+#warning TODO: Parse out lines of request and insert into request (array)
+	HTTPRequest request = HTTPRequestCreate();
+	HTTPRequestFree(request);
+	
 	//	GET http://rpi.edu/ HTTP/1.1
 	//	Host: rpi.edu
 	//	Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
