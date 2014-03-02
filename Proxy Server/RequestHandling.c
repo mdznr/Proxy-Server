@@ -58,9 +58,8 @@ HTTPRequest processRequest(char *requestString)
 {
 	printf("Processing Request\n");
 	
-#warning TODO: Parse out lines of request and insert into request (array)
 	HTTPRequest request = HTTPRequestCreate();
-	HTTPRequestFree(request);
+#warning TODO: Parse out lines of request and insert into request (array)
 	
 	//	GET http://rpi.edu/ HTTP/1.1
 	//	Host: rpi.edu
@@ -74,7 +73,11 @@ HTTPRequest processRequest(char *requestString)
 	//	Cache-Control: max-age=0
 	//	Accept-Encoding: gzip, deflate
 	
-	return NULL;
+	
+#warning Don't free here, but elsewhere.
+//	HTTPRequestFree(request);
+	
+	return request;
 }
 
 bool shouldFilterOutRequest(HTTPRequest request)
