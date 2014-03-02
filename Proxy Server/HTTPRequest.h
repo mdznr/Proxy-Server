@@ -59,6 +59,7 @@ static HTTPRequestHeaderFieldName HTTPRequestHeaderFieldName_Warning = "Warning"
 
 /// Enumerated header fields for an HTTP Request.
 typedef enum {
+	HTTPRequestHeaderField_Request_Line,
 	HTTPRequestHeaderField_Accept,
 	HTTPRequestHeaderField_Accept_Charset,
 	HTTPRequestHeaderField_Accept_Encoding,

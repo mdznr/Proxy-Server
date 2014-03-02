@@ -62,6 +62,7 @@ static HTTPResponseHeaderFieldName HTTPResponseHeaderFieldName_WWW_Authenticate 
 
 /// Enumerated header fields for an HTTP Response.
 typedef enum {
+	HTTPResponseHeaderField_Response_Line,
 	HTTPResponseHeaderField_Access_Control_Allow_Origin,
 	HTTPResponseHeaderField_Accept_Ranges,
 	HTTPResponseHeaderField_Age,
