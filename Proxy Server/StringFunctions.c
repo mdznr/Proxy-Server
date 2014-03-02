@@ -61,7 +61,7 @@ char *substr(const char *begin, const char *end)
 	return substring;
 }
 
-char *substringUntilCharacter(const char *string, const char character)
+char *prefixOfStringUpUntilCharacter(const char *string, const char character)
 {
 	char *occurance = strchr(string, (int) character);
 	char *substring = substr(string, occurance);

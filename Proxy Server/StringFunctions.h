@@ -35,7 +35,7 @@ char *substr(const char *begin, const char *end);
 /// @param character The character to search for.
 /// @return A newly allocated string containing the prefix of @c string up until the first occurance of @c character.
 /// @discussion Returns @c NULL if @c character does not exist in @c string.
-char *prefixUntilCharacter(const char *string, const char character);
+char *prefixOfStringUpUntilCharacter(const char *string, const char character);
 
 /// Get the prefix of a string until a substring.
 /// @param string The null-terminated byte stream.
