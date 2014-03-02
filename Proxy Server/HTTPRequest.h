@@ -98,7 +98,7 @@ typedef enum {
 
 /// Get the HTTPRequestHeaderField enum value for an HTTPRequestHeaderFieldName.
 /// @param fieldName The @c HTTPRequestHeaderFieldName.
-/// @return The @c HTTPRequestHeaderField enumeration value for the given field name or @c NULL if the conversion failed.
+/// @return The @c HTTPRequestHeaderField enumeration value for the given field name or -1 if the conversion failed.
 HTTPRequestHeaderField HTTPRequestHeaderFieldForFieldNamed(HTTPRequestHeaderFieldName fieldName);
 
 #endif

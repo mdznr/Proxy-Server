@@ -105,5 +105,5 @@ HTTPRequestHeaderField HTTPRequestHeaderFieldForFieldNamed(HTTPRequestHeaderFiel
 	}
 	
 	// Conversion failed.
-	return (HTTPRequestHeaderField) NULL;
+	return -1;
 }
