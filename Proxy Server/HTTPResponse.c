@@ -9,7 +9,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "HTTPRequest.h"
+#include "HTTPResponse.h"
 
 #include "StringFunctions.h"
 
