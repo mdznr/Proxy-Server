@@ -13,6 +13,12 @@
 /// @discussion The index of each field can be found using @c HTTPResponseHeaderField.
 typedef char ** HTTPResponse;
 
+/// Create an HTTPResponse.
+/// @return A newly allocated HTTPResponse.
+HTTPResponse HTTPResponseCreate();
+
+#warning Create dealloc function for HTTPResponse?
+
 /// A header field name for an HTTP Response.
 typedef const char * const HTTPResponseHeaderFieldName;
 
@@ -93,7 +99,7 @@ typedef enum {
 	HTTPResponseHeaderField_WWW_Authenticate,
 	
 	/// The total number of HTTPResponseHeaderField
-	HTTPResponseHeaderFieldsTotal
+	HTTPResponseHeaderFieldsCount
 } HTTPResponseHeaderField;
 
 /// Get the HTTPResponseHeaderField enum value for an HTTPResponseHeaderFieldName.

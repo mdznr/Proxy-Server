@@ -7,11 +7,17 @@
 //
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 #include "HTTPResponse.h"
 
 #include "StringFunctions.h"
+
+HTTPResponse HTTPResponseCreate()
+{
+	return (HTTPResponse) malloc(sizeof(char *) * HTTPResponseHeaderFieldsCount);
+}
 
 HTTPResponseHeaderField HTTPResponseHeaderFieldForFieldNamed(HTTPResponseHeaderFieldName fieldName)
 {

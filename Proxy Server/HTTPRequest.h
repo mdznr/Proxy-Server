@@ -15,6 +15,12 @@
 /// @discussion The index of each field can be found using @c HTTPRequestHeaderField.
 typedef char ** HTTPRequest;
 
+/// Create an HTTPRequest.
+/// @return A newly allocated HTTPRequest.
+HTTPRequest HTTPRequestCreate();
+
+#warning Create dealloc function for HTTPRequest?
+
 /// A header field name for an HTTP Request.
 typedef const char * const HTTPRequestHeaderFieldName;
 
@@ -85,7 +91,7 @@ typedef enum {
 	HTTPRequestHeaderField_Warning,
 	
 	/// The total number of @c HTTPRequestHeaderField
-	HTTPRequestHeaderFieldsTotal
+	HTTPRequestHeaderFieldsCount
 } HTTPRequestHeaderField;
 
 /// Get the HTTPRequestHeaderField enum value for an HTTPRequestHeaderFieldName.
