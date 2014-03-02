@@ -63,6 +63,12 @@ int main(int argc, const char *argv[])
 		// Advance the parse pointer to the end of the line, and after the delimiter.
 		parse = next + strlen(delimiter);
 		
+#warning Handle the first line differently, has no ": ".
+		
+		char *firstString = NULL;
+		char *secondString = NULL;
+		splitStringAtString(line, ": ", &firstString, &secondString);
+		
 		// Stop when at the end of the header.
 		if ( line == NULL ) {
 			break;
