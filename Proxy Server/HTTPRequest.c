@@ -42,10 +42,17 @@ bool validateRequest(HTTPRequest request)
 	 */
 	
 	char *Request_Line = request[HTTPRequestHeaderField_Request_Line];
+	
+	char *Method = NULL;
+	char *MethodArgs = NULL;
+	if ( !splitStringAtString(Request_Line, " ", &Method, &MethodArgs) ) {
+		// Invalid Request-Line.
+		return false;
+	}
+	
 	char *Request_URI = NULL;
 	char *HTTP_Version = NULL;
-	bool split = splitStringAtString(Request_Line, " ", &Request_URI, &HTTP_Version);
-	if ( !split ) {
+	if ( !splitStringAtString(MethodArgs, " ", &Request_URI, &HTTP_Version) ) {
 		// Invalid Request-Line.
 		return false;
 	}
@@ -68,7 +75,7 @@ bool validateRequest(HTTPRequest request)
 	}
 	
 	// If POST, must include Content-Length.
-	if ( stringEquality(request[HTTPRequestHeaderField_Request_Line], "POST") ) {
+	if ( stringEquality(Method, "POST") ) {
 		if ( request[HTTPRequestHeaderField_Content_Length] == NULL ) {
 			return false;
 		}
