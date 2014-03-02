@@ -19,7 +19,8 @@ typedef char ** HTTPRequest;
 /// @return A newly allocated HTTPRequest.
 HTTPRequest HTTPRequestCreate();
 
-#warning Create dealloc function for HTTPRequest?
+/// Deallocate an instance of HTTPRequest.
+void HTTPRequestFree(HTTPRequest request);
 
 /// A header field name for an HTTP Request.
 typedef const char * const HTTPRequestHeaderFieldName;

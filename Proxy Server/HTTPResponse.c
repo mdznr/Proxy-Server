@@ -16,7 +16,22 @@
 
 HTTPResponse HTTPResponseCreate()
 {
+	// Create an array of strings; one for each header field.
 	return (HTTPResponse) malloc(sizeof(char *) * HTTPResponseHeaderFieldsCount);
+}
+
+void HTTPResponseFree(HTTPResponse response)
+{
+	// Free all the strings contained in the response.
+	for ( int i=0; i<HTTPResponseHeaderFieldsCount; ++i ) {
+		// Only if there is a value for this field.
+		if ( response[i] != NULL ) {
+			free(response[i]);
+		}
+	}
+	
+	// Free the response itself.
+	free(response);
 }
 
 HTTPResponseHeaderField HTTPResponseHeaderFieldForFieldNamed(HTTPResponseHeaderFieldName fieldName)

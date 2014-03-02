@@ -13,11 +13,12 @@
 /// @discussion The index of each field can be found using @c HTTPResponseHeaderField.
 typedef char ** HTTPResponse;
 
-/// Create an HTTPResponse.
+/// Create an instance of HTTPResponse.
 /// @return A newly allocated HTTPResponse.
 HTTPResponse HTTPResponseCreate();
 
-#warning Create dealloc function for HTTPResponse?
+/// Deallocate an instance of HTTPResponse.
+void HTTPResponseFree(HTTPResponse response);
 
 /// A header field name for an HTTP Response.
 typedef const char * const HTTPResponseHeaderFieldName;

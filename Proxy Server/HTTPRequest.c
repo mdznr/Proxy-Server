@@ -16,7 +16,22 @@
 
 HTTPRequest HTTPRequestCreate()
 {
+	// Create an array of strings; one for each header field.
 	return (HTTPRequest) malloc(sizeof(char *) * HTTPRequestHeaderFieldsCount);
+}
+
+void HTTPRequestFree(HTTPRequest request)
+{
+	// Free all the strings contained in the request.
+	for ( int i=0; i<HTTPRequestHeaderFieldsCount; ++i ) {
+		// Only if there is a value for this field.
+		if ( request[i] != NULL ) {
+			free(request[i]);
+		}
+	}
+	
+	// Free the request itself.
+	free(request);
 }
 
 HTTPRequestHeaderField HTTPRequestHeaderFieldForFieldNamed(HTTPRequestHeaderFieldName fieldName)
