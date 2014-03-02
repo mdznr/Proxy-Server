@@ -11,29 +11,33 @@
 
 #include "RequestHandling.h"
 
+
 #pragma mark - Private API (Prototypes)
 
 /// Parse an HTTP request.
 /// @param request The HTTP request.
 /// @return The parsed HTTP request.
-HTTPRequest processRequest(char **request);
+HTTPRequest processRequest(char *request);
 
 /// Determine whether a request should be filtered out or not.
 /// @param request The HTTP request.
 /// @return Whether or not the request should be filtered out or not.
-bool shouldFilterOutRequest(char *request);
+bool shouldFilterOutRequest(HTTPRequest request);
 
 /// Determine whether a server should be filtered out or not.
 /// @param server The server in the HTTP request.
 /// @return Whether or not the server should be filtered out or not.
 bool shouldFilterOutServer(char *server);
 
+
 #pragma mark - Public API Implementation
 
 void *handleRequest(void *arg)
 {
-	char *request = (char *) arg;
+	char *requestString = (char *) arg;
 	printf("Handling Request\n");
+	
+	HTTPRequest request = processRequest(requestString);
 	
 	// Figure out if the request should be filtered out.
 	if ( shouldFilterOutRequest(request) ) {
@@ -50,7 +54,7 @@ void *handleRequest(void *arg)
 
 #pragma mark - Private API (Implementation)
 
-HTTPRequest processRequest(char **request)
+HTTPRequest processRequest(char *request)
 {
 	printf("Processing Request\n");
 	
@@ -69,13 +73,14 @@ HTTPRequest processRequest(char **request)
 	return NULL;
 }
 
+bool shouldFilterOutRequest(HTTPRequest request)
+{
+	HTTPRequestHeaderField hostField = HTTPRequestHeaderFieldForFieldNamed(HTTPRequestHeaderFieldName_Host);
+	char *server = request[hostField];
+	return shouldFilterOutServer(server);
+}
+
 bool shouldFilterOutServer(char *server)
 {
 	return false;
-}
-
-bool shouldFilterOutRequest(char *request)
-{
-	char *server = serverForRequest(request);
-	return shouldFilterOutServer(server);
 }
