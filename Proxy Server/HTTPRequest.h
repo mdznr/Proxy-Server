@@ -38,6 +38,7 @@ static HTTPRequestHeaderFieldName HTTPRequestHeaderFieldName_Accept_Datetime = "
 static HTTPRequestHeaderFieldName HTTPRequestHeaderFieldName_Authorization = "Authorization";
 static HTTPRequestHeaderFieldName HTTPRequestHeaderFieldName_Cache_Control = "Cache-Control";
 static HTTPRequestHeaderFieldName HTTPRequestHeaderFieldName_Connection = "Connection";
+static HTTPRequestHeaderFieldName HTTPRequestHeaderFieldName_Proxy_Connection = "Proxy-Connection";
 static HTTPRequestHeaderFieldName HTTPRequestHeaderFieldName_Cookie = "Cookie";
 static HTTPRequestHeaderFieldName HTTPRequestHeaderFieldName_Content_Length = "Content-Length";
 static HTTPRequestHeaderFieldName HTTPRequestHeaderFieldName_Content_MD5 = "Content-MD5";
@@ -73,6 +74,7 @@ typedef enum {
 	HTTPRequestHeaderField_Authorization,
 	HTTPRequestHeaderField_Cache_Control,
 	HTTPRequestHeaderField_Connection,
+	HTTPRequestHeaderField_Proxy_Connection,
 	HTTPRequestHeaderField_Cookie,
 	HTTPRequestHeaderField_Content_Length,
 	HTTPRequestHeaderField_Content_MD5,

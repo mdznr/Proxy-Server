@@ -103,6 +103,8 @@ HTTPRequestHeaderField HTTPRequestHeaderFieldForFieldNamed(HTTPRequestHeaderFiel
 		return HTTPRequestHeaderField_Cache_Control;
 	} else if ( stringEquality(fieldName, HTTPRequestHeaderFieldName_Connection) ) {
 		return HTTPRequestHeaderField_Connection;
+	} else if ( stringEquality(fieldName, HTTPRequestHeaderFieldName_Proxy_Connection) ) {
+		return HTTPRequestHeaderField_Proxy_Connection;
 	} else if ( stringEquality(fieldName, HTTPRequestHeaderFieldName_Cookie) ) {
 		return HTTPRequestHeaderField_Cookie;
 	} else if ( stringEquality(fieldName, HTTPRequestHeaderFieldName_Content_Length) ) {
