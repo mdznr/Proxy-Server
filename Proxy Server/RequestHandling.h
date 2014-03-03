@@ -12,6 +12,13 @@
 #include "Boolean.h"
 #include "HTTP.h"
 
+/// The filters to ignore.
+/// @discussion Filters out any request to a server that starts or ends with the filter string.
+const char **filters;
+
+/// The total count of filters.
+static unsigned int filtersCount = 0;
+
 /// Handle an HTTP request.
 /// @param arg The request string.
 /// @return @c NULL

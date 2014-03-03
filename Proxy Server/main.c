@@ -40,10 +40,6 @@ extern int errno;
 /// Message to send.
 char *msg = "ack";
 
-/// The filters to ignore.
-/// @discussion Filters out any request to a server that starts or ends with the filter string.
-const char **filters;
-
 int main(int argc, const char *argv[])
 {
 #warning This is just a test.
@@ -104,12 +100,14 @@ int main(int argc, const char *argv[])
 		port = (unsigned short) conversion;
 	}
 	
-	// All of the prefixes/suffixes to filter out
-	unsigned int numberOfFilters = 0;
+	/*
+	 Your proxy server must filter based on domain name (or IP address) prefixes/suffixes as described above. All command-line arguments following the port number are domain or IP address prefixes/suffixes that must be filtered. There can be zero or more of these; and there is no limit to the number of arguments.
+	 */
+	
 	// Contains at least one filter.
 	if ( argc > START_INDEX_FILTERS ) {
 		// Filters are START_INDEX_FILTERS less than the number of arguments to the program.
-		numberOfFilters = argc - START_INDEX_FILTERS;
+		filtersCount = argc - START_INDEX_FILTERS;
 		// Create a pointer to the start of the filters in argv.
 		filters = &argv[START_INDEX_FILTERS];
 	}

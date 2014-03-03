@@ -7,6 +7,7 @@
 //
 
 #include <stdio.h>
+#include <string.h>
 #include <pthread.h>
 
 #include "RequestHandling.h"
@@ -21,13 +22,13 @@ HTTPRequest processRequest(char *requestString);
 
 /// Determine whether a request should be filtered out or not.
 /// @param request The HTTP request.
-/// @return Whether or not the request should be filtered out or not.
-bool shouldFilterOutRequest(HTTPRequest request);
+/// @return Whether or not the request should be allowed.
+bool shouldAllowRequest(HTTPRequest request);
 
 /// Determine whether a server should be filtered out or not.
 /// @param server The server in the HTTP request.
-/// @return Whether or not the server should be filtered out or not.
-bool shouldFilterOutServer(char *server);
+/// @return Whether or not the server should be allowed.
+bool shouldAllowServer(const char *server);
 
 
 #pragma mark - Public API Implementation
@@ -40,7 +41,7 @@ void *handleRequest(void *arg)
 	HTTPRequest request = processRequest(requestString);
 	
 	// Figure out if the request should be filtered out.
-	if ( shouldFilterOutRequest(request) ) {
+	if ( !shouldAllowRequest(request) ) {
 		// Return HTTP Error 403 Forbidden
 		printf("Should return 403");
 	}
@@ -80,14 +81,35 @@ HTTPRequest processRequest(char *requestString)
 	return request;
 }
 
-bool shouldFilterOutRequest(HTTPRequest request)
+bool shouldAllowRequest(HTTPRequest request)
 {
 	HTTPRequestHeaderField hostField = HTTPRequestHeaderFieldForFieldNamed(HTTPRequestHeaderFieldName_Host);
 	char *server = request[hostField];
-	return shouldFilterOutServer(server);
+	return shouldAllowServer(server);
 }
 
-bool shouldFilterOutServer(char *server)
+bool shouldAllowServer(const char *server)
 {
-	return false;
+	// The end of the server string (used for finding suffix matches).
+	const char *serverEnd = server + strlen(server);
+	
+	// Check against all of the filters.
+	for ( int i=0; i<filtersCount; ++i ) {
+		const char *filter = filters[i];
+		
+#warning Handle case of the string?
+		
+		// Check prefix.
+		if ( strcmp(server, filter) == 0 ) {
+			return false;
+		}
+		
+		// Check suffix.
+		if ( strcmp(serverEnd - strlen(filter), filter) == 0 ) {
+			return false;
+		}
+		
+	}
+	
+	return true;
 }
