@@ -43,11 +43,14 @@ char *msg = "ack";
 int main(int argc, const char *argv[])
 {
 #warning This is just a test.
-	char *request = "GET http://stackoverflow.com/questions/18183633/string-parsing-in-c-using-strtok HTTP/1.1\r\nHost: stackoverflow.com\r\nAccept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8\r\nPragma: no-cache\r\nConnection: keep-alive\r\nProxy-Connection: keep-alive\r\nCookie: __qca=P0-411423666-1383243503829; __utma=140029553.441791018.1383243504.1389471284.1389595028.126; __utmz=140029553.1389471284.125.73.utmcsr=duckduckgo.com|utmccn=(referral)|utmcmd=referral|utmcct=/; _ga=GA1.2.441791018.1383243504; sgt=id=51d9348c-b86f-4197-8309-6b750d69b238; usr=t=FecSPNNOLkO6&s=y5ID6CONs0yz\r\nUser-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.74.9 (KHTML, like Gecko) Version/7.0.2 Safari/537.74.9\r\nAccept-Language: en-us\r\nCache-Control: max-age=0\r\nAccept-Encoding: gzip, deflate\r\n\r\n";
+	char *requestString = "GET http://stackoverflow.com/questions/18183633/string-parsing-in-c-using-strtok HTTP/1.1\r\nHost: stackoverflow.com\r\nAccept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8\r\nPragma: no-cache\r\nConnection: keep-alive\r\nProxy-Connection: keep-alive\r\nCookie: __qca=P0-411423666-1383243503829; __utma=140029553.441791018.1383243504.1389471284.1389595028.126; __utmz=140029553.1389471284.125.73.utmcsr=duckduckgo.com|utmccn=(referral)|utmcmd=referral|utmcct=/; _ga=GA1.2.441791018.1383243504; sgt=id=51d9348c-b86f-4197-8309-6b750d69b238; usr=t=FecSPNNOLkO6&s=y5ID6CONs0yz\r\nUser-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.74.9 (KHTML, like Gecko) Version/7.0.2 Safari/537.74.9\r\nAccept-Language: en-us\r\nCache-Control: max-age=0\r\nAccept-Encoding: gzip, deflate\r\n\r\n";
 	
 	// Start the parsing at the beginning of the request.
-	char *parse = request;
+	char *parse = requestString;
 	static const char * const delimiter = "\r\n";
+	HTTPRequest request = HTTPRequestCreate();
+	
+	// Parse out the rest of the headers.
 	for ( int i=0; i<HTTPRequestHeaderFieldsCount; ++i ) {
 		
 		// Find the end of the line.
@@ -59,21 +62,67 @@ int main(int argc, const char *argv[])
 		// Advance the parse pointer to the end of the line, and after the delimiter.
 		parse = next + strlen(delimiter);
 		
-#warning Handle the first line differently, has no ": ".
-		
-		char *firstString = NULL;
-		char *secondString = NULL;
-		splitStringAtString(line, ": ", &firstString, &secondString);
-		
 		// Stop when at the end of the header.
 		if ( line == NULL ) {
 			break;
+		}
+		
+		// Split the line into field
+		char *fieldName = NULL;
+		char *fieldValue = NULL;
+		splitStringAtString(line, ": ", &fieldName, &fieldValue);
+		
+		// Must be the first line, as it is not in the format: "Field Name: Value".
+		if ( fieldName== NULL && fieldValue == NULL ) {
+			/*
+			 2. Your server must handle GET, HEAD, and POST request methods.
+			 */
+			
+			// The request method is the first token.
+			char *requestMethod = prefixOfStringUpUntilCharacter(line, ' ');
+			
+			/*
+			 Your server must forward the appropriate HTTP request headers to the requested server, then send the responses back to the client.
+			 */
+#warning TODO: Forward HTTP Request Headers
+			
+#warning Do not hard-code "GET", "HEAD", and "POST".
+			if ( stringEquality(requestMethod, "GET") ) {
+				request[HTTPRequestHeaderField_Request_Line] = line;
+			} else if ( stringEquality(requestMethod, "HEAD")) {
+				request[HTTPRequestHeaderField_Request_Line] = line;
+			} else if ( stringEquality(requestMethod, "POST") ) {
+				request[HTTPRequestHeaderField_Request_Line] = line;
+			} else {
+				/*
+				 3. Your server must refuse to process any HTTP request method other than GET, HEAD, and POST. In such cases, you should send back an HTTP status code of 405 (Method not allowed) or 501 (Not Implemented) if you receive any other request method.
+				 */
+#warning TODO: Send back a HTTP Status Code of 501.
+				break;
+			}
+			
+		}
+		// In the format of: "Field Name: Value"
+		else {
+			HTTPRequestHeaderField field = HTTPRequestHeaderFieldForFieldNamed(fieldName);
+			if ( (int) field == -1 ) {
+				// Conversion failed.
+#warning TODO: Handle unknown field name.
+				break;
+			}
+			request[field] = fieldValue;
 		}
 		
 		// Print the line, for debugging.
 		printf("%s\n", line);
 	}
 	
+	/*
+	 Your server must send an error to the client whenever appropriate, including such cases as the request line being invalid, a Host: header is not found, or a POST request does not include a Content-Length: header. In these cases, your server must send a 400 (Bad Request) as a result.
+	 */
+	
+	// Check request to see if it's valid.
+	bool valid = validateRequest(request);
 	
 	return EXIT_SUCCESS;
 	
