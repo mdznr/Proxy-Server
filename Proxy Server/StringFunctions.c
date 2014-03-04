@@ -36,7 +36,7 @@ int indexOfFirstOccuranceOfCharacterInString(const char *string, const char char
 	return -1;
 }
 
-char *substr(const char *begin, const char *end)
+char *substring(const char *begin, const char *end)
 {
 	// End must be after begin.
 	if ( end <= begin ) {
@@ -47,32 +47,32 @@ char *substr(const char *begin, const char *end)
 	size_t stringLength = (end-begin);
 	
 	// Allocate size of the string length plus one for the null-terminator.
-	char *substring = malloc(sizeof(char) * (stringLength + 1) );
+	char *sub = malloc(sizeof(char) * (stringLength + 1) );
 	
 	// Avoid diqualifying const.
 	char *beginning = (char *) begin;
 	
 	// Copy over substring.
-	memcpy(substring, beginning, sizeof(char) * stringLength);
+	memcpy(sub, beginning, sizeof(char) * stringLength);
 	
 	// Terminate the substring.
-	substring[stringLength] = '\0';
+	sub[stringLength] = '\0';
 	
-	return substring;
+	return sub;
 }
 
 char *prefixOfStringUpUntilCharacter(const char *string, const char character)
 {
 	char *occurance = strchr(string, (int) character);
-	char *substring = substr(string, occurance);
+	char *sub = substring(string, occurance);
 	
-	return substring;
+	return sub;
 }
 
-char *prefixOfStringUpUntilString(const char *string, const char *substring)
+char *prefixOfStringUpUntilString(const char *string, const char *end)
 {
-	char *occurance = strstr(string, substring);
-	char *prefix = substr(string, occurance);
+	char *occurance = strstr(string, end);
+	char *prefix = substring(string, occurance);
 	
 	return prefix;
 }
@@ -88,7 +88,7 @@ bool splitStringAtString(const char *fullString, const char *delimiter, char **f
 	}
 	
 	// First string is up until the occurance of the delimiter.
-	*firstString = substr(fullString, occurance);
+	*firstString = substring(fullString, occurance);
 	
 	// The second string is after the occurance of the delimiter.
 	*secondString = strdup(occurance + strlen(delimiter));

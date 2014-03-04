@@ -28,7 +28,7 @@ int indexOfFirstOccuranceOfCharacterInString(const char *string, const char char
 /// @param begin The pointer to the beginning of the string.
 /// @param end The pointer to the end of the substring.
 /// @return A newly allocated string for the substring.
-char *substr(const char *begin, const char *end);
+char *substring(const char *begin, const char *end);
 
 /// Get the prefix of a string until a specific character.
 /// @param string The null-terminated byte stream.
@@ -39,10 +39,10 @@ char *prefixOfStringUpUntilCharacter(const char *string, const char character);
 
 /// Get the prefix of a string until a substring.
 /// @param string The null-terminated byte stream.
-/// @param substring The substring to end at.
+/// @param end The substring to end at.
 /// @return A newly allocated string containing the prefix of @c string up until the first cocurance of @c substring.
 /// @discussion Returns @c NULL if @c substring does not exist in @c string.
-char *prefixOfStringUpUntilString(const char *string, const char *substring);
+char *prefixOfStringUpUntilString(const char *string, const char *end);
 
 /// Split a string into two with a string separator.
 /// @param fullString The full string to split.
