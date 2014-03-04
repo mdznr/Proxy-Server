@@ -65,10 +65,13 @@ int main(int argc, const char *argv[])
 	 Your proxy server must filter based on domain name (or IP address) prefixes/suffixes as described above. All command-line arguments following the port number are domain or IP address prefixes/suffixes that must be filtered. There can be zero or more of these; and there is no limit to the number of arguments.
 	 */
 	
+	filtersCount = malloc(sizeof(unsigned int));
+	*filtersCount = 0;
+	
 	// Contains at least one filter.
 	if ( argc > START_INDEX_FILTERS ) {
 		// Filters are START_INDEX_FILTERS less than the number of arguments to the program.
-		filtersCount = argc - START_INDEX_FILTERS;
+		*filtersCount = argc - START_INDEX_FILTERS;
 		// Create a pointer to the start of the filters in argv.
 		filters = &argv[START_INDEX_FILTERS];
 	}
