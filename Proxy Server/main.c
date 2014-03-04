@@ -173,9 +173,17 @@ int main(int argc, const char *argv[])
 					if ( n < strlen(msg) ) {
 						perror("send()");
 					} else {
-						// Create thread to handle message.
-						if ( pthread_create(&tid[i], NULL, handleRequest, (void *) buffer) != 0 ) {
-							perror( "Could not create thread" );
+						/*
+						 6. Your server does must be a concurrent server (i.e. do not use an iterative server).
+						 */
+						
+						// Create a thread to handle message.
+						fd_msg *arg = malloc(sizeof(fd_msg));
+						arg->fd = fd;
+						arg->address = server;
+						arg->msg = buffer;
+						if ( pthread_create(&tid[i], NULL, handleRequest, (void *) arg) != 0 ) {
+							perror( "Could not create thread." );
 						}
 					}
 				}
