@@ -79,6 +79,11 @@ char *prefixOfStringUpUntilString(const char *string, const char *end)
 
 bool splitStringAtString(const char *fullString, const char *delimiter, char **firstString, char **secondString)
 {
+	// Must have valid fullString and delimiter.
+	if ( fullString == NULL || delimiter == NULL ) {
+		return false;
+	}
+	
 	// Find the delimiter in the full string.
 	char *occurance = strstr(fullString, delimiter);
 	
