@@ -94,7 +94,7 @@ bool shouldAllowServer(const char *server)
 	const char *serverEnd = server + strlen(server);
 	
 	// Check against all of the filters.
-	for ( int i=0; i<filtersCount; ++i ) {
+	for ( int i=0; i<*filtersCount; ++i ) {
 		const char *filter = filters[i];
 		
 #warning Handle case of the string?

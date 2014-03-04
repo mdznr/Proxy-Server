@@ -29,7 +29,7 @@ typedef struct {
 const char **filters;
 
 /// The total count of filters.
-static unsigned int filtersCount = 0;
+unsigned int *filtersCount;
 
 /// Handle an HTTP request.
 /// @param arg The request string.
