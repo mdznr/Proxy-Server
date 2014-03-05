@@ -31,14 +31,14 @@
 
 extern int errno;
 
-#define BUFFER_SIZE 1024
+//#define BUFFER_SIZE 1024
+#warning BUFFER_SIZE should be 1024, so fix chunking. Accumulate whole message before sending to processing?
+#define BUFFER_SIZE 2048
+
 #define MAX_CLIENTS 100
 #define MAX_THREADS 100
 
 #define START_INDEX_FILTERS 2
-
-/// Message to send.
-char *msg = "ack";
 
 int main(int argc, const char *argv[])
 {
@@ -162,29 +162,25 @@ int main(int argc, const char *argv[])
 							break;  // All done
 						}
 					}
-					// TODO: Close thread
+					// TODO: Close fd
 				} else if ( n < 0 ) {
+					// TODO: Close fd?
 					perror("recv()");
-					// TODO: Close thread?
 				} else {
 					buffer[n] = '\0';
 					printf("Received message from fd %d: %s\n", fd, buffer);
-					n = send(fd, msg, strlen(msg), 0);
-					if ( n < strlen(msg) ) {
-						perror("send()");
-					} else {
-						/*
-						 6. Your server does must be a concurrent server (i.e. do not use an iterative server).
-						 */
-						
-						// Create a thread to handle message.
-						sock_msg *arg = malloc(sizeof(sock_msg));
-						arg->sock = fd;
-						arg->address = server;
-						arg->msg = buffer;
-						if ( pthread_create(&tid[i], NULL, handleRequest, (void *) arg) != 0 ) {
-							perror( "Could not create thread." );
-						}
+					
+					/*
+					 6. Your server does must be a concurrent server (i.e. do not use an iterative server).
+					 */
+					
+					// Create a thread to handle message.
+					sock_msg *arg = malloc(sizeof(sock_msg));
+					arg->sock = fd;
+					arg->address = server;
+					arg->msg = buffer;
+					if ( pthread_create(&tid[i], NULL, handleRequest, (void *) arg) != 0 ) {
+						perror( "Could not create thread." );
 					}
 				}
 			}

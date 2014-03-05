@@ -195,18 +195,15 @@ HTTPRequest processRequest(char *requestString)
 		
 		// Advance the parse pointer to the end of the line, and after the delimiter.
 		parse = next + strlen(delimiter);
+#warning There's sometimes an issue where \n appears at the beginning of the line.
 		
 		// Stop when at the end of the header.
 		if ( line == NULL ) {
 			break;
 		}
 		
-		// Split the line into field name and value.
-		char *fieldName = NULL;
-		char *fieldValue = NULL;
-		
-		// Must be the first line, as it is not in the format: "Field Name: Value".
-		if ( !splitStringAtString(line, ": ", &fieldName, &fieldValue) ) {
+		// The first line is different.
+		if ( i == 0 ) {
 			/*
 			 2. Your server must handle GET, HEAD, and POST request methods.
 			 */
@@ -217,11 +214,6 @@ HTTPRequest processRequest(char *requestString)
 #warning Something really went wrong.
 				continue;
 			}
-			
-			/*
-			 Your server must forward the appropriate HTTP request headers to the requested server, then send the responses back to the client.
-			 */
-#warning TODO: Forward HTTP Request Headers
 			
 #warning Do not hard-code "GET", "HEAD", and "POST".
 			if ( stringEquality(requestMethod, "GET") ) {
@@ -238,9 +230,17 @@ HTTPRequest processRequest(char *requestString)
 				break;
 			}
 			
-		}
-		// In the format of: "Field Name: Value"
-		else {
+		} else {
+			// In the format of: "Field Name: Value"
+			
+			// Split the line into field name and value.
+			char *fieldName = NULL;
+			char *fieldValue = NULL;
+			if ( !splitStringAtString(line, ": ", &fieldName, &fieldValue) ) {
+				// Line isn't in the correct format.
+				continue;
+			}
+			
 			HTTPRequestHeaderField field = HTTPRequestHeaderFieldForFieldNamed(fieldName);
 			if ( (int) field == -1 ) {
 				// Conversion failed.
@@ -269,8 +269,12 @@ HTTPRequest processRequest(char *requestString)
 
 bool shouldAllowRequest(HTTPRequest request)
 {
-	HTTPRequestHeaderField hostField = HTTPRequestHeaderFieldForFieldNamed(HTTPRequestHeaderFieldName_Host);
-	char *server = request[hostField];
+	// Request must be non-NULL.
+	if ( request == NULL ) {
+		return false;
+	}
+	
+	char *server = request[HTTPRequestHeaderField_Host];
 #warning Base off of HOST or the second param in Request Line?
 	return shouldAllowServer(server);
 }
