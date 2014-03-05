@@ -14,11 +14,14 @@
 #include <netdb.h>
 #include <netinet/in.h>
 #include <sys/socket.h>
-#include <arpa/inet.h>
+#include <unistd.h>
 
 #include "RequestHandling.h"
 
 #include "StringFunctions.h"
+
+#warning Should this be 1024 and handle chunking?
+#define RECEIVED_MESSAGE_BUFFER_SIZE 2048
 
 #pragma mark - Private API (Prototypes)
 
@@ -44,12 +47,22 @@ void *handleRequest(void *argument)
 {
 	sock_msg *arg = (sock_msg *)argument;
 	int sock = arg->sock;
-	struct sockaddr_in server = arg->address;
+	struct sockaddr_in client = arg->address;
 	char *requestString = arg->msg;
 	
-	char *ip_addr = inet_ntoa((struct in_addr)server.sin_addr);
+	char *ip_addr = inet_ntoa((struct in_addr)client.sin_addr);
 	
+	// Process the request string into a HTTPRequest.
 	HTTPRequest request = processRequest(requestString);
+	if ( !request ) {
+		// Send back HTTP Error 400 Bad Request.
+		char *badRequest = "HTTP/1.1 400 Bad Request\r\n\r\n";
+		ssize_t send_client_n = send(sock, badRequest, strlen(badRequest), 0);
+		if ( send_client_n < strlen(badRequest) ) {
+			perror("send()");
+			goto end;
+		}
+	}
 	
 	/*
 	 When your server detects a request that should be filtered, your server should return an HTTP error 403 (forbidden), which means you need to send back an HTTP status line that indicates an error.
@@ -61,19 +74,98 @@ void *handleRequest(void *argument)
 		// Print Request Line
 		printf("%s: %s [FILTERED]\n", ip_addr, request[HTTPRequestHeaderField_Request_Line]);
 		
-		// Return HTTP Error 403 Forbidden
-		printf("Return 403\n");
+		// Send back HTTP Error 403 Forbidden.
+		char *badRequest = "HTTP/1.1 403 Forbidden\r\n\r\n";
+		ssize_t send_client_n = send(sock, badRequest, strlen(badRequest), 0);
+		if ( send_client_n < strlen(badRequest) ) {
+			perror("send()");
+			goto end;
+		}
+		
 	} else {
 #warning The HTTP-Version should not print?
 		// Print Request Line
 		printf("%s: %s\n", ip_addr, request[HTTPRequestHeaderField_Request_Line]);
 	}
 	
-#warning Handle request
+	/*
+	 Your server must forward the appropriate HTTP request headers to the requested server, then send the responses back to the client.
+	 */
 	
+	int serverSocket = socket(PF_INET, SOCK_STREAM, 0);
+	if ( serverSocket < 0 ) {
+		perror("socket()");
+#warning Don't use gotos?
+		goto end;
+	}
 	
-	// Request is no longer needed.
-	HTTPRequestFree(request);
+	// Server
+	struct sockaddr_in server;
+	server.sin_family = PF_INET;
+	
+	struct hostent *hp = gethostbyname(request[HTTPRequestHeaderField_Host]);
+	if ( hp == NULL ) {
+		perror("Unknown host");
+		goto end;
+	}
+	
+	// Could also use memcpy
+	bcopy((char *)hp->h_addr, (char *)&server.sin_addr, hp->h_length);
+	unsigned short port = 80;
+	server.sin_port = htons(port);
+	
+	// Connect.
+	if ( connect(serverSocket, (struct sockaddr *)&server, sizeof(server) ) < 0 ) {
+		perror("connect()");
+		goto end;
+	}
+	
+	// Send.
+	ssize_t send_n = send(serverSocket, requestString, strlen(requestString), 0);
+	if ( send_n < strlen(requestString) ) {
+		perror("send()");
+		goto end;
+	}
+	
+	// Buffer to load received messages into.
+	char buffer[RECEIVED_MESSAGE_BUFFER_SIZE];
+	
+	// Receive.
+	while (1) {
+		// BLOCK
+		ssize_t received_n = recv(serverSocket, buffer, RECEIVED_MESSAGE_BUFFER_SIZE - 1, 0);
+		if ( received_n == 0 ) {
+			// Peer has closed its half side of the (TCP) connection.
+			break;
+		} else if ( received_n < 0 ) {
+			// Error.
+			perror("recv()");
+			goto end;
+		} else {
+			// End the buffer with a null-terminator.
+			buffer[received_n] = '\0';
+			// Print out the received message for debugging.
+			printf("\n\nReceived message from %s:\n%s\n\n", inet_ntoa((struct in_addr)server.sin_addr), buffer);
+			
+			ssize_t send_client_n = send(sock, buffer, strlen(buffer), 0);
+			if ( send_client_n < strlen(buffer) ) {
+				perror("send()");
+				goto end;
+			}
+		}
+	}
+		
+end:
+	
+	close(serverSocket);
+	
+	if ( request != NULL ) {
+		// Request is no longer needed.
+		HTTPRequestFree(request);
+	}
+	
+	// The socket is no longer needed.
+	close(sock);
 	
 	// Use this to return message back to calling thread and terminate.
 	pthread_exit(NULL);
@@ -167,7 +259,8 @@ HTTPRequest processRequest(char *requestString)
 	
 	// Check request to see if the request's valid.
 	if ( !validateRequest(request) ) {
-#warning TODO: send 400 (Bad Request).
+		// Free unused request.
+		HTTPRequestFree(request);
 		return NULL;
 	}
 	
