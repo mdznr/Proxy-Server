@@ -27,6 +27,7 @@ void HTTPRequestFree(HTTPRequest request)
 		// Only if there is a value for this field.
 		if ( request[i] != NULL ) {
 			free(request[i]);
+			request[i] = NULL;
 		}
 	}
 	
@@ -83,6 +84,32 @@ bool validateRequest(HTTPRequest request)
 	
 	// No errors are found.
 	return true;
+}
+
+#warning Implement requestStringFromRequest()
+char *requestStringFromRequest(HTTPRequest request)
+{
+#warning strcat does not guarantee enough room.
+	
+	char *requestLine = request[HTTPRequestHeaderField_Request_Line];
+	if ( !requestLine ) {
+		return NULL;
+	}
+	
+	char *string = strdup(requestLine);
+	
+	for ( int i=0; i<HTTPRequestHeaderFieldsCount; ++i ) {
+		char *line = request[i];
+		if ( !line ) {
+			string = strcat(string, "\r\n");
+			string = strcat(string, line);
+		}
+	}
+	
+	// End of message.
+	string = strcat(string, "\r\n");
+	
+	return string;
 }
 
 HTTPRequestHeaderField HTTPRequestHeaderFieldForFieldNamed(HTTPRequestHeaderFieldName fieldName)
