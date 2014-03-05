@@ -31,12 +31,11 @@
 
 extern int errno;
 
-//#define BUFFER_SIZE 1024
 #warning BUFFER_SIZE should be 1024, so fix chunking. Accumulate whole message before sending to processing?
 #define BUFFER_SIZE 2048
 
-#define MAX_CLIENTS 100
-#define MAX_THREADS 100
+#define MAX_CLIENTS 128
+#define MAX_THREADS 128
 
 #define START_INDEX_FILTERS 2
 
