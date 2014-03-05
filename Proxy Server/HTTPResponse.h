@@ -109,4 +109,9 @@ typedef enum {
 /// @return The @c HTTPResponseHeaderField enumeration value for the given field name or -1 if the conversion failed.
 HTTPResponseHeaderField HTTPResponseHeaderFieldForFieldNamed(HTTPResponseHeaderFieldName fieldName);
 
+/// Look up the status string for a particular status code.
+/// @param The status code to look up.
+/// @return A string representing the status or @c NULL, if none found.
+const char * const statusStringForStatusCode(int statusCode);
+
 #endif

@@ -41,16 +41,23 @@ bool shouldAllowRequest(HTTPRequest request);
 /// @return Whether or not the server should be allowed.
 bool shouldAllowServer(const char *server);
 
+/// Send an HTTP Error Code to a socket.
+/// @param errorNo The HTTP Response error code.
+/// @param socket The socket to send the error to.
+void sendHTTPErrorToSocket(int errorNo, int socket);
+
 
 #pragma mark - Public API Implementation
 
 void *handleRequest(void *argument)
 {
+	// Unpack argument into variables.
 	sock_msg *arg = (sock_msg *)argument;
 	int sock = arg->sock;
 	struct sockaddr_in client = arg->address;
 	char *requestString = arg->msg;
 	
+	// Read the IP Address into a string.
 	char *ip_addr = inet_ntoa((struct in_addr)client.sin_addr);
 	
 	// Process the request string into a HTTPRequest.
@@ -71,20 +78,12 @@ void *handleRequest(void *argument)
 	
 	// Figure out if the request should be filtered out.
 	if ( !shouldAllowRequest(request) ) {
-#warning The HTTP-Version should not print?
 		// Print Request Line
 		printf("%s: %s [FILTERED]\n", ip_addr, request[HTTPRequestHeaderField_Request_Line]);
 		
 		// Send back HTTP Error 403 Forbidden.
-		char *badRequest = "HTTP/1.1 403 Forbidden\r\n\r\n";
-		ssize_t send_client_n = send(sock, badRequest, strlen(badRequest), 0);
-		if ( send_client_n < strlen(badRequest) ) {
-			perror("send()");
-			goto end;
-		}
-		
+		sendHTTPErrorToSocket(403, sock);
 	} else {
-#warning The HTTP-Version should not print?
 		// Print Request Line
 		printf("%s: %s\n", ip_addr, request[HTTPRequestHeaderField_Request_Line]);
 	}
@@ -93,14 +92,18 @@ void *handleRequest(void *argument)
 	 Your server must forward the appropriate HTTP request headers to the requested server, then send the responses back to the client.
 	 */
 	
-	// Modify request string
-#warning move to cleaner solution.
-//	char *serverRequestString = requestStringFromRequest(request);
+	// Modify request string to remove host from request uri.
 	char *serverRequestString = strdup(requestString);
 	char *firstSpace = strchr(serverRequestString, (int) ' ') + 1;
 	char *thirdSlash = strchr(requestString, (int) '/') + 1;
 	thirdSlash = strchr(thirdSlash, (int) '/') + 1;
 	thirdSlash = strchr(thirdSlash, (int) '/');
+	if ( thirdSlash == NULL ) {
+		// Find the second space and then add '/' manually.
+		char *secondSpace = strchr(serverRequestString, (int) ' ');
+		strcpy(firstSpace, "/");
+		thirdSlash = secondSpace;
+	}
 	strcpy(firstSpace, thirdSlash);
 	
 	int serverSocket = socket(PF_INET, SOCK_STREAM, 0);
@@ -235,8 +238,9 @@ HTTPRequest processRequest(char *requestString)
 				return false;
 			}
 			
-#warning make relative request URI
+#warning TODO: Make a relative request URI.
 			char *Relative_Request_URI = Request_URI;
+			
 			
 			unsigned long valueLength = strlen(Method) + 1 + strlen(Relative_Request_URI) + 1 + strlen(HTTP_Version) + 1;
 			char *value = malloc(sizeof(char) * valueLength);
@@ -338,4 +342,15 @@ bool shouldAllowServer(const char *server)
 	}
 	
 	return true;
+}
+
+void sendHTTPErrorToSocket(int errorNo, int socket)
+{
+	char *errorString = "HTTP/1.1 403 Forbidden\r\n\r\n";
+	ssize_t send_client_n = send(socket, errorString, strlen(errorString), 0);
+	if ( send_client_n < strlen(errorString) ) {
+		perror("send()");
+#warning How to handle send() error?
+		return;
+	}
 }
