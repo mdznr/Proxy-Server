@@ -24,8 +24,13 @@ void HTTPRequestFree(HTTPRequest request);
 
 /// Validate an instance of HTTPRequest.
 /// @param request The HTTPRequest to validate.
-/// Whether or not the request is valid.
+/// @return Whether or not the request is valid.
 bool validateRequest(HTTPRequest request);
+
+/// Create a request string from a given HTTP Request.
+/// @param request The HTTPRequest to translate into a string.
+/// @return A newly allocated string containing the request.
+char *requestStringFromRequest(HTTPRequest request);
 
 /// A header field name for an HTTP Request.
 typedef const char * const HTTPRequestHeaderFieldName;

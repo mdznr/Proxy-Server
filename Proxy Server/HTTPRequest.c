@@ -86,28 +86,42 @@ bool validateRequest(HTTPRequest request)
 	return true;
 }
 
-#warning Implement requestStringFromRequest()
 char *requestStringFromRequest(HTTPRequest request)
 {
-#warning strcat does not guarantee enough room.
-	
 	char *requestLine = request[HTTPRequestHeaderField_Request_Line];
 	if ( !requestLine ) {
 		return NULL;
 	}
 	
+#warning TODO: modify request line.
+	
 	char *string = strdup(requestLine);
 	
 	for ( int i=0; i<HTTPRequestHeaderFieldsCount; ++i ) {
+		// Skip the request line.
+		if ( i == HTTPRequestHeaderField_Request_Line ) {
+			continue;
+		}
+		
 		char *line = request[i];
-		if ( !line ) {
-			string = strcat(string, "\r\n");
-			string = strcat(string, line);
+		if ( line ) {
+			unsigned long newLength = strlen(string) + strlen("\r\n") + strlen(line);
+			char *biggerString = malloc(sizeof(char) * (newLength + 1));
+			strcpy(biggerString, string);
+			free(string);
+			strcat(biggerString, "\r\n");
+			strcat(biggerString, line);
+			string = biggerString;
 		}
 	}
 	
 	// End of message.
-	string = strcat(string, "\r\n");
+	unsigned long newLength = strlen(string) + strlen("\r\n\r\n");
+	char *biggerString = malloc(sizeof(char) * (newLength + 1));
+	strcpy(biggerString, string);
+	strcat(biggerString, "\r\n\r\n");
+	free(string);
+	string = biggerString;
 	
 	return string;
 }
