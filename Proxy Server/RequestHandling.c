@@ -346,11 +346,28 @@ bool shouldAllowServer(const char *server)
 
 void sendHTTPErrorToSocket(int errorNo, int socket)
 {
-	char *errorString = "HTTP/1.1 403 Forbidden\r\n\r\n";
+	unsigned long maxLength =  8  // "HTTP/1.1"
+						    +  1
+							+  3  // 3-digit error no.
+						    +  1
+							+ 36  // Max length of status string
+	                        +  5; // Double carriage return/newline + null-terminator
+	
+	// Create buffer for error string.
+	char *errorString = malloc(sizeof(char) * maxLength);
+	
+	// Populate the string.
+	sprintf(errorString, "%s %d %s\r\n\r\n", "HTTP/1.1", errorNo, statusStringForStatusCode(errorNo));
+	
+	// Send the error.
 	ssize_t send_client_n = send(socket, errorString, strlen(errorString), 0);
+	
+	// The string is no longer needed.
+	free(errorString);
+	
+	// Check for errors in send.
 	if ( send_client_n < strlen(errorString) ) {
 		perror("send()");
 #warning How to handle send() error?
-		return;
 	}
 }
