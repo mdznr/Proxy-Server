@@ -43,8 +43,9 @@ bool shouldAllowServer(const char *server);
 
 /// Send an HTTP Error Code to a socket.
 /// @param errorNo The HTTP Response error code.
-/// @param socket The socket to send the error to.
-void sendHTTPErrorToSocket(int errorNo, int socket);
+/// @param client The socket to send the error to.
+/// @return Whether or not the transmission was successful.
+bool sendHTTPErrorToSocket(int errorNo, int client);
 
 
 #pragma mark - Public API Implementation
@@ -344,8 +345,9 @@ bool shouldAllowServer(const char *server)
 	return true;
 }
 
-void sendHTTPErrorToSocket(int errorNo, int socket)
+bool sendHTTPErrorToSocket(int errorNo, int client)
 {
+	// Find the maximum length of the error string. (To create buffer of correct size).
 	unsigned long maxLength =  8  // "HTTP/1.1"
 						    +  1
 							+  3  // 3-digit error no.
@@ -354,20 +356,30 @@ void sendHTTPErrorToSocket(int errorNo, int socket)
 	                        +  5; // Double carriage return/newline + null-terminator
 	
 	// Create buffer for error string.
-	char *errorString = malloc(sizeof(char) * maxLength);
+	char *error_str = malloc(sizeof(char) * maxLength);
 	
 	// Populate the string.
-	sprintf(errorString, "%s %d %s\r\n\r\n", "HTTP/1.1", errorNo, statusStringForStatusCode(errorNo));
+	int sprinted = snprintf(error_str, maxLength, "%s %d %s\r\n\r\n", "HTTP/1.1", errorNo, statusStringForStatusCode(errorNo));
+	
+	// Check for errors in sprintf.
+	if ( sprinted < 0 ) {
+		// Error in snprintf.
+	} else if ( sprinted < maxLength ) {
+		// Did not get to sprint the whole string.
+	}
 	
 	// Send the error.
-	ssize_t send_client_n = send(socket, errorString, strlen(errorString), 0);
+	ssize_t send_n = send(client, error_str, strlen(error_str), 0);
 	
 	// The string is no longer needed.
-	free(errorString);
+	free(error_str);
 	
 	// Check for errors in send.
-	if ( send_client_n < strlen(errorString) ) {
+	if ( send_n < strlen(error_str) ) {
 		perror("send()");
-#warning How to handle send() error?
+		return false;
 	}
+	
+	// Everything went OK!
+	return true;
 }
