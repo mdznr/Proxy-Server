@@ -92,6 +92,10 @@ void *handleRequest(void *argument)
 	 Your server must forward the appropriate HTTP request headers to the requested server, then send the responses back to the client.
 	 */
 	
+	// Modify request string
+#warning move to cleaner solution.
+	char *serverRequestString = requestStringFromRequest(request);
+	
 	int serverSocket = socket(PF_INET, SOCK_STREAM, 0);
 	if ( serverSocket < 0 ) {
 		perror("socket()");
@@ -121,8 +125,8 @@ void *handleRequest(void *argument)
 	}
 	
 	// Send.
-	ssize_t send_n = send(serverSocket, requestString, strlen(requestString), 0);
-	if ( send_n < strlen(requestString) ) {
+	ssize_t send_n = send(serverSocket, serverRequestString, strlen(serverRequestString), 0);
+	if ( send_n < strlen(serverRequestString) ) {
 		perror("send()");
 		goto end;
 	}
