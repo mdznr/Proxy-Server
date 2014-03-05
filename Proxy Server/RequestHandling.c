@@ -10,6 +10,7 @@
 #include <string.h>
 #include <pthread.h>
 
+#include <arpa/inet.h>
 #include <netdb.h>
 #include <netinet/in.h>
 #include <sys/socket.h>
@@ -41,8 +42,8 @@ bool shouldAllowServer(const char *server);
 
 void *handleRequest(void *argument)
 {
-	fd_msg *arg = (fd_msg *)argument;
-	int fd = arg->fd;
+	sock_msg *arg = (sock_msg *)argument;
+	int sock = arg->sock;
 	struct sockaddr_in server = arg->address;
 	char *requestString = arg->msg;
 	
@@ -108,7 +109,7 @@ HTTPRequest processRequest(char *requestString)
 			break;
 		}
 		
-		// Split the line into field
+		// Split the line into field name and value.
 		char *fieldName = NULL;
 		char *fieldValue = NULL;
 		

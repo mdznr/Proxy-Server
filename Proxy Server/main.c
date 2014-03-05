@@ -178,8 +178,8 @@ int main(int argc, const char *argv[])
 						 */
 						
 						// Create a thread to handle message.
-						fd_msg *arg = malloc(sizeof(fd_msg));
-						arg->fd = fd;
+						sock_msg *arg = malloc(sizeof(sock_msg));
+						arg->sock = fd;
 						arg->address = server;
 						arg->msg = buffer;
 						if ( pthread_create(&tid[i], NULL, handleRequest, (void *) arg) != 0 ) {

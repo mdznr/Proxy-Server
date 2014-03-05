@@ -14,15 +14,15 @@
 
 /// A structure to hold a file descriptor and a message.
 typedef struct {
-	/// File descriptor (socket).
-	int fd;
+	/// Socket/File Descriptor.
+	int sock;
 	
 	/// The address in the communications space of the socket.
 	struct sockaddr_in address;
 	
 	/// Message sent by fd.
 	char *msg;
-} fd_msg;
+} sock_msg;
 
 /// The filters to ignore.
 /// @discussion Filters out any request to a server that starts or ends with the filter string.
