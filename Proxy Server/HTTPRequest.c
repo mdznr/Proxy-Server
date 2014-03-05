@@ -17,7 +17,7 @@
 HTTPRequest HTTPRequestCreate()
 {
 	// Create an array of strings; one for each header field.
-	return (HTTPRequest) malloc(sizeof(char *) * HTTPRequestHeaderFieldsCount);
+	return (HTTPRequest) calloc(HTTPRequestHeaderFieldsCount, sizeof(char *));
 }
 
 void HTTPRequestFree(HTTPRequest request)
