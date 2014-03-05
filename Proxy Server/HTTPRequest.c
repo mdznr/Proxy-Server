@@ -58,7 +58,7 @@ bool validateRequest(HTTPRequest request)
 		return false;
 	}
 	
-#warning TODO: Check if valid Request-URI.
+	// TODO: Check if valid Request-URI.
 	
 	// Check if supported HTTP-Version.
 	if ( stringEquality(HTTP_Version, "HTTP/1.1") ) {
