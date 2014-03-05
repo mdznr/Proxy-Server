@@ -44,7 +44,6 @@ int main(int argc, const char *argv[])
 	// Set up signal handler via signal().
 	signal(SIGUSR1, &handleSIGUSR1);
 	signal(SIGUSR2, &handleSIGUSR2);
-//	signal(SIGCHLD, &kill_zombies);
 	
 	// The port number to use for the socket.
 	unsigned short port = 8127; // The default port is 8127 (if no arguments are given).
