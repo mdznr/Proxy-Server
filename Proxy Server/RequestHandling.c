@@ -7,6 +7,7 @@
 //
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <pthread.h>
 
@@ -94,7 +95,13 @@ void *handleRequest(void *argument)
 	
 	// Modify request string
 #warning move to cleaner solution.
-	char *serverRequestString = requestStringFromRequest(request);
+//	char *serverRequestString = requestStringFromRequest(request);
+	char *serverRequestString = strdup(requestString);
+	char *firstSpace = strchr(serverRequestString, (int) ' ') + 1;
+	char *thirdSlash = strchr(requestString, (int) '/') + 1;
+	thirdSlash = strchr(thirdSlash, (int) '/') + 1;
+	thirdSlash = strchr(thirdSlash, (int) '/');
+	strcpy(firstSpace, thirdSlash);
 	
 	int serverSocket = socket(PF_INET, SOCK_STREAM, 0);
 	if ( serverSocket < 0 ) {
@@ -212,26 +219,48 @@ HTTPRequest processRequest(char *requestString)
 			 2. Your server must handle GET, HEAD, and POST request methods.
 			 */
 			
-			// The request method is the first token.
-			char *requestMethod = prefixOfStringUpUntilCharacter(line, ' ');
-			if ( !requestMethod ) {
-#warning Something really went wrong.
+			char *Method = NULL;
+			char *MethodArgs = NULL;
+			if ( !splitStringAtString(line, " ", &Method, &MethodArgs) ) {
+				// Invalid Request-Line.
 				continue;
+#warning Something really went wrong
+				return false;
 			}
 			
+			char *Request_URI = NULL;
+			char *HTTP_Version = NULL;
+			if ( !splitStringAtString(MethodArgs, " ", &Request_URI, &HTTP_Version) ) {
+				// Invalid Request-Line.
+				return false;
+			}
+			
+#warning make relative request URI
+			char *Relative_Request_URI = Request_URI;
+			
+			unsigned long valueLength = strlen(Method) + 1 + strlen(Relative_Request_URI) + 1 + strlen(HTTP_Version) + 1;
+			char *value = malloc(sizeof(char) * valueLength);
+			strcpy(value, Method);
+			strcat(value, " ");
+			strcat(value, Relative_Request_URI);
+			strcat(value, " ");
+			strcat(value, HTTP_Version);
+			value[valueLength-1] = '\0';
+			
 #warning Do not hard-code "GET", "HEAD", and "POST".
-			if ( stringEquality(requestMethod, "GET") ) {
-				request[HTTPRequestHeaderField_Request_Line] = line;
-			} else if ( stringEquality(requestMethod, "HEAD")) {
-				request[HTTPRequestHeaderField_Request_Line] = line;
-			} else if ( stringEquality(requestMethod, "POST") ) {
-				request[HTTPRequestHeaderField_Request_Line] = line;
+			if ( stringEquality(Method, "GET") ) {
+				request[HTTPRequestHeaderField_Request_Line] = value;
+			} else if ( stringEquality(Method, "HEAD")) {
+				request[HTTPRequestHeaderField_Request_Line] = value;
+			} else if ( stringEquality(Method, "POST") ) {
+				request[HTTPRequestHeaderField_Request_Line] = value;
 			} else {
 				/*
 				 3. Your server must refuse to process any HTTP request method other than GET, HEAD, and POST. In such cases, you should send back an HTTP status code of 405 (Method not allowed) or 501 (Not Implemented) if you receive any other request method.
 				 */
 #warning TODO: Send back a HTTP Status Code of 501.
-				break;
+				HTTPRequestFree(request);
+				return NULL;
 			}
 			
 		} else {
