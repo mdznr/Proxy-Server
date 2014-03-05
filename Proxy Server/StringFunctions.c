@@ -13,6 +13,11 @@
 
 bool stringEquality(const char *s1, const char *s2)
 {
+	// Strings must be non-NULL.
+	if ( !s1 || !s2 ) {
+		return false;
+	}
+	
 	return strcmp(s1, s2) == 0;
 }
 
