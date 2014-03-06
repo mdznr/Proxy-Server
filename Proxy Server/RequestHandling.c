@@ -41,11 +41,11 @@ bool shouldAllowRequest(HTTPRequest request);
 /// @return Whether or not the server should be allowed.
 bool shouldAllowServer(const char *server);
 
-/// Send an HTTP Error Code to a socket.
-/// @param errorNo The HTTP Response error code.
-/// @param client The socket to send the error to.
+/// Send an HTTP Status Line to a socket.
+/// @param errorNo The HTTP Response code.
+/// @param client The socket to send the status to.
 /// @return Whether or not the transmission was successful.
-bool sendHTTPErrorToSocket(int errorNo, int client);
+bool sendHTTPStatusToSocket(int status, int client);
 
 
 #pragma mark - Public API Implementation
@@ -343,21 +343,21 @@ bool shouldAllowServer(const char *server)
 	return true;
 }
 
-bool sendHTTPErrorToSocket(int errorNo, int client)
+bool sendHTTPStatusToSocket(int status, int client)
 {
-	// Find the maximum length of the error string. (To create buffer of correct size).
+	// Find the maximum length of the status string. (To create buffer of correct size).
 	unsigned long maxLength =  8  // "HTTP/1.1"
 						    +  1
-							+  3  // 3-digit error no.
+							+  3  // 3-digit status code.
 						    +  1
 							+ 36  // Max length of status string
 	                        +  5; // Double carriage return/newline + null-terminator
 	
-	// Create buffer for error string.
-	char *error_str = malloc(sizeof(char) * maxLength);
+	// Create buffer for status string.
+	char *status_str = malloc(sizeof(char) * maxLength);
 	
 	// Populate the string.
-	int sprinted = snprintf(error_str, maxLength, "%s %d %s\r\n\r\n", "HTTP/1.1", errorNo, statusStringForStatusCode(errorNo));
+	int sprinted = snprintf(status_str, maxLength, "%s %d %s\r\n\r\n", "HTTP/1.1", status, statusStringForStatusCode(status));
 	
 	// Check for errors in sprintf.
 	if ( sprinted < 0 ) {
@@ -366,14 +366,14 @@ bool sendHTTPErrorToSocket(int errorNo, int client)
 		// Did not get to sprint the whole string.
 	}
 	
-	// Send the error.
-	ssize_t send_n = send(client, error_str, strlen(error_str), 0);
+	// Send the status.
+	ssize_t send_n = send(client, status_str, strlen(status_str), 0);
 	
 	// The string is no longer needed.
-	free(error_str);
+	free(status_str);
 	
 	// Check for errors in send.
-	if ( send_n < strlen(error_str) ) {
+	if ( send_n < strlen(status_str) ) {
 		perror("send()");
 		return false;
 	}
