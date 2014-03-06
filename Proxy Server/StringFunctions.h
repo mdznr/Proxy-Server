@@ -17,6 +17,11 @@
 /// @return Whether or not the strings are equal.
 bool stringEquality(const char *s1, const char *s2);
 
+/// Create a lower-case version of a string.
+/// @param s The string to convert to lowercase.
+/// @return A newly allocated string.
+char *lowerCaseVersionOfString(const char *s);
+
 /// Compare two ascii strings and ignoring case.
 /// @param s1 The first string.
 /// @param s2 The second string.
@@ -33,11 +38,6 @@ int caseInsensitiveStringComparison(const char *s1, const char *s2);
 /// @discussion Comparison done after translation of each corresponding character to lower-case. The strings themselves are not modified. The comparison is done using unsigned characters, so that `\200' is greater than `\0'.
 /// @see strncasecmp Modeled after @c strncasecmp as it is not available on all systems.
 int caseInsensitiveStringComparisonLimited(const char *s1, const char *s2, size_t n);
-
-/// Create a lower-case version of a string.
-/// @apram s The string to convert to lowercase.
-/// @return A newly allocated string.
-char *lowerCaseString(const char *s);
 
 /// Find the index of the first occurance of a character in a string.
 /// @param string The null-terminated byte stream.

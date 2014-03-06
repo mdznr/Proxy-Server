@@ -23,11 +23,18 @@ bool stringEquality(const char *s1, const char *s2)
 	return strcmp(s1, s2) == 0;
 }
 
+char *lowerCaseVersionOfString(const char *s)
+{
+	char *dup = strdup(s);
+	for ( char *p = dup; *p != '\0'; ++p) *p = tolower(*p);
+	return dup;
+}
+
 int caseInsensitiveStringComparison(const char *s1, const char *s2)
 {
 	// Convert to lower-case.
-	char *s3 = lowerCaseString(s1);
-	char *s4 = lowerCaseString(s2);
+	char *s3 = lowerCaseVersionOfString(s1);
+	char *s4 = lowerCaseVersionOfString(s2);
 	
 	// Make comparison.
 	int result = strcmp(s3, s4);
@@ -43,8 +50,8 @@ int caseInsensitiveStringComparison(const char *s1, const char *s2)
 int caseInsensitiveStringComparisonLimited(const char *s1, const char *s2, size_t n)
 {
 	// Convert to lower-case.
-	char *s3 = lowerCaseString(s1);
-	char *s4 = lowerCaseString(s2);
+	char *s3 = lowerCaseVersionOfString(s1);
+	char *s4 = lowerCaseVersionOfString(s2);
 	
 	// Make comparison.
 	int result = strncmp(s3, s4, n);
@@ -55,13 +62,6 @@ int caseInsensitiveStringComparisonLimited(const char *s1, const char *s2, size_
 	
 	// Return the result.
 	return result;
-}
-
-char *lowerCaseString(const char *s)
-{
-	char *dup = strdup(s);
-	for ( char *p = dup; *p != '\0'; ++p) *p = tolower(*p);
-	return dup;
 }
 
 int indexOfFirstOccuranceOfCharacterInString(const char *string, const char character)
