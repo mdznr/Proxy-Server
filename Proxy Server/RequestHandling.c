@@ -217,8 +217,9 @@ HTTPRequest processRequest(char *requestString)
 			break;
 		}
 		
-		// The first line is different.
+		// The first line is different than the rest.
 		if ( i == 0 ) {
+			
 			/*
 			 2. Your server must handle GET, HEAD, and POST request methods.
 			 */
