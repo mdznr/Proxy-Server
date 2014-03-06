@@ -28,8 +28,9 @@
 
 /// Parse an HTTP request.
 /// @param request The HTTP request.
+/// @param error The possible error in processing.
 /// @return The parsed HTTP request.
-HTTPRequest processRequest(char *requestString);
+HTTPRequest processRequest(char *requestString, int *error);
 
 /// Determine whether a request should be filtered out or not.
 /// @param request The HTTP request.
@@ -62,7 +63,8 @@ void *handleRequest(void *argument)
 	char *ip_addr = inet_ntoa((struct in_addr)client.sin_addr);
 	
 	// Process the request string into a HTTPRequest.
-	HTTPRequest request = processRequest(requestString);
+	int error;
+	HTTPRequest request = processRequest(requestString, &error);
 	if ( !request ) {
 		// Send back HTTP Error 400 Bad Request.
 		char *badRequest = "HTTP/1.1 400 Bad Request\r\n\r\n";
@@ -191,7 +193,7 @@ end:
 
 #pragma mark - Private API (Implementation)
 
-HTTPRequest processRequest(char *requestString)
+HTTPRequest processRequest(char *requestString, int *error)
 {
 	HTTPRequest request = HTTPRequestCreate();
 	
@@ -264,8 +266,8 @@ HTTPRequest processRequest(char *requestString)
 				/*
 				 3. Your server must refuse to process any HTTP request method other than GET, HEAD, and POST. In such cases, you should send back an HTTP status code of 405 (Method not allowed) or 501 (Not Implemented) if you receive any other request method.
 				 */
-#warning TODO: Send back a HTTP Status Code of 501.
 				HTTPRequestFree(request);
+				*error = 405;
 				return NULL;
 			}
 			
@@ -300,6 +302,7 @@ HTTPRequest processRequest(char *requestString)
 	if ( !validateRequest(request) ) {
 		// Free unused request.
 		HTTPRequestFree(request);
+		*error = 400;
 		return NULL;
 	}
 	
