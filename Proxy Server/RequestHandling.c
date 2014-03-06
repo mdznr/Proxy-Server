@@ -327,17 +327,16 @@ bool shouldAllowServer(const char *server)
 	for ( int i=0; i<*filtersCount; ++i ) {
 		const char *filter = filters[i];
 		
-#warning Handle case of the string?
 		// Length of filter string.
 		size_t filterLen = strlen(filter);
 		
 		// Check prefix.
-		if ( strncmp(server, filter, filterLen) == 0 ) {
+		if ( caseInsensitiveStringComparisonLimited(server, filter, filterLen) == 0 ) {
 			return false;
 		}
 		
 		// Check suffix.
-		if ( strncmp(serverEnd - filterLen, filter, filterLen) == 0 ) {
+		if ( caseInsensitiveStringComparisonLimited(serverEnd - filterLen, filter, filterLen) == 0 ) {
 			return false;
 		}
 		
