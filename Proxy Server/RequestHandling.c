@@ -313,9 +313,7 @@ bool shouldAllowRequest(HTTPRequest request)
 		return false;
 	}
 	
-	char *server = request[HTTPRequestHeaderField_Host];
-#warning Base off of HOST or the second param in Request Line?
-	return shouldAllowServer(server);
+	return shouldAllowServer(request[HTTPRequestHeaderField_Host]);
 }
 
 bool shouldAllowServer(const char *server)
