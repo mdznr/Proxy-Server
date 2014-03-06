@@ -81,13 +81,13 @@ void *handleRequest(void *argument)
 	
 	// Figure out if the request should be filtered out.
 	if ( !shouldAllowRequest(request) ) {
-		// Print Request Line
+		// Print Request Line [FILTERED].
 		printf("%s: %s [FILTERED]\n", ip_addr, request[HTTPRequestHeaderField_Request_Line]);
 		
 		// Send back HTTP Error 403 Forbidden.
 		sendHTTPStatusToSocket(403, sock);
 	} else {
-		// Print Request Line
+		// Print Request Line.
 		printf("%s: %s\n", ip_addr, request[HTTPRequestHeaderField_Request_Line]);
 	}
 	
