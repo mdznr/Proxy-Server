@@ -66,13 +66,8 @@ void *handleRequest(void *argument)
 	int error;
 	HTTPRequest request = processRequest(requestString, &error);
 	if ( !request ) {
-		// Send back HTTP Error 400 Bad Request.
-		char *badRequest = "HTTP/1.1 400 Bad Request\r\n\r\n";
-		ssize_t send_client_n = send(sock, badRequest, strlen(badRequest), 0);
-		if ( send_client_n < strlen(badRequest) ) {
-			perror("send()");
-			goto end;
-		}
+		// Send back HTTP Error.
+		sendHTTPStatusToSocket(error, sock);
 	}
 	
 	/*
