@@ -121,11 +121,15 @@ int main(int argc, const char *argv[])
 		fd_set readfds;
 		FD_ZERO(&readfds);
 		FD_SET(sock, &readfds);
-//		printf("Set FD_SET to include listener fd %d\n", sock);
+#ifdef DEBUG
+		printf("Set FD_SET to include listener fd %d\n", sock);
+#endif
 		
 		for ( int i=0; i<client_socket_index; ++i ) {
 			FD_SET(client_sockets[i], &readfds);
-//			printf("Set FD_SET to include client socket fd %d\n", client_sockets[i]);
+#ifdef DEBUG
+			printf("Set FD_SET to include client socket fd %d\n", client_sockets[i]);
+#endif
 		}
 		
 		// The number of ready file descriptors
@@ -138,7 +142,9 @@ int main(int argc, const char *argv[])
 		if ( FD_ISSET(sock, &readfds) ) {
 			// We know that this accept() call will NOT block.
 			int newsock = accept(sock, (struct sockaddr *)&client, &fromlen);
+#ifdef DEBUG
 			printf("Accepted client connection\n");
+#endif
 			client_sockets[client_socket_index++] = newsock;
 		}
 		
@@ -148,7 +154,9 @@ int main(int argc, const char *argv[])
 				ssize_t n = recv(fd, buffer, BUFFER_SIZE - 1, 0);
 				if ( n == 0 ) {
 					int k;
+#ifdef DEBUG
 					printf("Client on fd %d closed connection\n", fd);
+#endif
 					// Remove fd from client_sockets[] array:
 					for ( k=0; k<client_socket_index; k++ ) {
 						if ( fd == client_sockets[k] ) {
@@ -166,7 +174,9 @@ int main(int argc, const char *argv[])
 					perror("recv()");
 				} else {
 					buffer[n] = '\0';
-					printf("Received message from fd %d: %s\n", fd, buffer);
+#ifdef DEBUG
+			printf("Received message from fd %d: %s\n", fd, buffer);
+#endif
 					
 					/*
 					 6. Your server does must be a concurrent server (i.e. do not use an iterative server).
@@ -178,7 +188,7 @@ int main(int argc, const char *argv[])
 					arg->address = server;
 					arg->msg = buffer;
 					if ( pthread_create(&tid[i], NULL, handleRequest, (void *) arg) != 0 ) {
-						perror( "Could not create thread." );
+						perror("Could not create thread.");
 					}
 				}
 			}

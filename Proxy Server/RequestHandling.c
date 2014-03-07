@@ -156,8 +156,11 @@ void *handleRequest(void *argument)
 		} else {
 			// End the buffer with a null-terminator.
 			buffer[received_n] = '\0';
-			// Print out the received message for debugging.
+			
+#ifdef DEBUG
+			// Print out the received message.
 			printf("\n\nReceived message from %s:\n%s\n\n", inet_ntoa((struct in_addr)server.sin_addr), buffer);
+#endif
 			
 			ssize_t send_client_n = send(sock, buffer, strlen(buffer), 0);
 			if ( send_client_n < strlen(buffer) ) {
@@ -285,8 +288,10 @@ HTTPRequest processRequest(char *requestString, int *error)
 			request[field] = fieldValue;
 		}
 		
-		// Print the line, for debugging.
+#ifdef DEBUG
+		// Print the line.
 		printf("%s\n", line);
+#endif
 	}
 	
 	/*
