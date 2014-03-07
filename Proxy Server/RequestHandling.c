@@ -19,6 +19,7 @@
 
 #include "RequestHandling.h"
 
+#include "Filters.h"
 #include "StringFunctions.h"
 
 #warning Should this be 1024 and handle chunking?
