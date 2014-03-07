@@ -36,6 +36,7 @@
  */
 void handleSIGUSR1()
 {
+#warning handleSIGUSR1;
 	printf("SIGUSR1");
 }
 
@@ -48,5 +49,6 @@ void handleSIGUSR1()
  */
 void handleSIGUSR2()
 {
+#warning handleSIGUSR2;
 	printf("SIGUSR2");
 }
