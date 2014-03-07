@@ -225,8 +225,7 @@ HTTPRequest processRequest(char *requestString, int *error)
 			char *MethodArgs = NULL;
 			if ( !splitStringAtString(line, " ", &Method, &MethodArgs) ) {
 				// Invalid Request-Line.
-				continue;
-#warning Something really went wrong
+				*error = 400;
 				return false;
 			}
 			
