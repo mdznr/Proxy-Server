@@ -30,6 +30,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		C908C53418CA819A00D6949B /* Filters.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Filters.h; sourceTree = "<group>"; };
 		C9312E3018BF96AF00533CBE /* MutexLock.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MutexLock.h; sourceTree = "<group>"; };
 		C960503A18C2A52000B47D10 /* HTTPRequest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HTTPRequest.h; sourceTree = "<group>"; };
 		C960503B18C2AE8F00B47D10 /* HTTPRequest.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = HTTPRequest.c; sourceTree = "<group>"; };
@@ -111,6 +112,7 @@
 				C9DFC74118B652F300C551ED /* main.c */,
 				C9DFC74A18B6590100C551ED /* Boolean.h */,
 				C9312E3018BF96AF00533CBE /* MutexLock.h */,
+				C908C53418CA819A00D6949B /* Filters.h */,
 				C960504418C2D0D100B47D10 /* RequestHandling.h */,
 				C960504818C2D14400B47D10 /* RequestHandling.c */,
 				C960504518C2D0DB00B47D10 /* HTTP */,

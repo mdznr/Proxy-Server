@@ -24,6 +24,7 @@
 #include <sys/types.h>
 
 #include "Boolean.h"
+#include "Filters.h"
 #include "MutexLock.h"
 #include "RequestHandling.h"
 #include "SignalHandling.h"

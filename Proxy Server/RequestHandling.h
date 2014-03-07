@@ -24,13 +24,6 @@ typedef struct {
 	char *msg;
 } sock_msg;
 
-/// The filters to ignore.
-/// @discussion Filters out any request to a server that starts or ends with the filter string.
-const char **filters;
-
-/// The total count of filters.
-unsigned int *filtersCount;
-
 /// Handle an HTTP request.
 /// @param arg The request string.
 /// @return @c NULL
