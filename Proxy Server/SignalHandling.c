@@ -10,6 +10,8 @@
 
 #include "SignalHandling.h"
 
+#include "Filters.h"
+
 /*
  When your server receives a SIGUSR1 signal, your server should output a summary of what
  prefixes/suffixes it is filtering, as well as the set of statistics shown in the example below:
@@ -37,7 +39,30 @@
 void handleSIGUSR1()
 {
 #warning handleSIGUSR1;
-	printf("SIGUSR1");
+	
+	// Received signal.
+	printf("Received SIGUSR1...reporting status:\n");
+	
+	// Report the number of requests.
+#warning keep track of the number of successful requests;
+	unsigned int numberOfSuccessfulRequests = 0;
+	printf("-- Processed %d requests successfully.\n", numberOfSuccessfulRequests);
+	
+	// Report the filters being used.
+	printf("-- Filtering: doubleclick.com; slashdot.org\n");
+	for ( unsigned int i=0; i<*filtersCount; ++i ) {
+		printf(" %s;", filters[i]);
+	}
+	
+	// Report the number of filtered requests.
+#warning keep track of the number of filtered requests.
+	unsigned int numberOfFilteredRequests = 0;
+	printf("-- Filtered %d requests.\n", numberOfFilteredRequests);
+	
+	// Report the number of requests that resulted in errors.
+#warning keep track of the number of errored requests.
+	unsigned int numberOfErroredRequests = 0;
+	printf("-- Encountered %d requets in error\n", numberOfErroredRequests);
 }
 
 /*
@@ -50,5 +75,5 @@ void handleSIGUSR1()
 void handleSIGUSR2()
 {
 #warning handleSIGUSR2;
-	printf("SIGUSR2");
+	printf("Received SIGUSR2...");
 }
