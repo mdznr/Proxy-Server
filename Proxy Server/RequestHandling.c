@@ -233,6 +233,7 @@ HTTPRequest processRequest(char *requestString, int *error)
 			char *HTTP_Version = NULL;
 			if ( !splitStringAtString(MethodArgs, " ", &Request_URI, &HTTP_Version) ) {
 				// Invalid Request-Line.
+				*error = 400;
 				return false;
 			}
 			
