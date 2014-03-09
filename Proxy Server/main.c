@@ -157,10 +157,13 @@ int main(int argc, const char *argv[])
 #ifdef DEBUG
 					printf("Client on fd %d closed connection\n", fd);
 #endif
+					// Close fd
+					close(fd);
+					
 					// Remove fd from client_sockets[] array:
 					for ( int k=0; k<client_socket_index; k++ ) {
 						if ( fd == client_sockets[k] ) {
-							// Found it -- copy remaining elements over fd
+							// Found it. Copy the remaining elements over fd.
 							for ( int m=k; m<client_socket_index-1; m++ ) {
 								client_sockets[m] = client_sockets[m+1];
 							}
@@ -168,10 +171,22 @@ int main(int argc, const char *argv[])
 							break;  // All done
 						}
 					}
-					// TODO: Close fd
 				} else if ( n < 0 ) {
 					// TODO: Close fd?
 					perror("recv()");
+					
+					// Close fd
+					close(fd);
+					
+					// Remove fd from client_sockets[] array:
+					for ( int k=0; k<client_socket_index; k++ ) {
+						// Found it. Copy the remaining elements over fd.
+						for ( int m=k; m<client_socket_index-1; m++ ) {
+							client_sockets[m] = client_sockets[m+1];
+						}
+						client_socket_index--;
+						break; // All done
+					}
 				} else {
 					buffer[n] = '\0';
 #ifdef DEBUG
