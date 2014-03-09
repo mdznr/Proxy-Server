@@ -69,6 +69,7 @@ void *handleRequest(void *argument)
 	if ( !request ) {
 		// Send back HTTP Error.
 		sendHTTPStatusToSocket(error, sock);
+		goto end;
 	}
 	
 	/*
