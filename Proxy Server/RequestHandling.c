@@ -82,6 +82,7 @@ void *handleRequest(void *argument)
 		
 		// Send back HTTP Error 403 Forbidden.
 		sendHTTPStatusToSocket(403, sock);
+		goto end;
 	} else {
 		// Print Request Line.
 		printf("%s: %s\n", ip_addr, request[HTTPRequestHeaderField_Request_Line]);
