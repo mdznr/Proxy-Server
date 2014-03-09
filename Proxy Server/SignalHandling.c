@@ -39,6 +39,7 @@
 void handleSIGUSR1()
 {
 #warning handleSIGUSR1;
+#warning should print individually or concatenate strings to avoid concurrency issues?
 	
 	// Received signal.
 	printf("Received SIGUSR1...reporting status:\n");
