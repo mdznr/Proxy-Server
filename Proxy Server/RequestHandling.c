@@ -64,7 +64,7 @@ void *handleRequest(void *argument)
 	char *ip_addr = inet_ntoa((struct in_addr)client.sin_addr);
 	
 	// Process the request string into a HTTPRequest.
-	int error;
+	int error = 0;
 	HTTPRequest request = processRequest(requestString, &error);
 	if ( !request ) {
 		// Send back HTTP Error.
