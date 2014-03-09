@@ -153,10 +153,21 @@ int main(int argc, const char *argv[])
 			int fd = client_sockets[i];
 			if ( FD_ISSET(fd, &readfds) ) {
 				ssize_t n = recv(fd, buffer, BUFFER_SIZE - 1, 0);
-				if ( n == 0 ) {
+				// Check recv() return value.
+				
+				// Stream has errored or ended.
+				if ( n <= 0 ) {
+					// Ended gracefully.
+					if ( n == 0 ) {
 #ifdef DEBUG
-					printf("Client on fd %d closed connection\n", fd);
+						printf("Client on fd %d closed connection\n", fd);
 #endif
+					}
+					// Errored.
+					else {
+						perror("recv()");
+					}
+					
 					// Close fd
 					close(fd);
 					
@@ -171,28 +182,14 @@ int main(int argc, const char *argv[])
 							break;  // All done
 						}
 					}
-				} else if ( n < 0 ) {
-					// TODO: Close fd?
-					perror("recv()");
 					
-					// Close fd
-					close(fd);
-					
-					// Remove fd from client_sockets[] array:
-					for ( int k=0; k<client_socket_index; k++ ) {
-						// Found it. Copy the remaining elements over fd.
-						for ( int m=k; m<client_socket_index-1; m++ ) {
-							client_sockets[m] = client_sockets[m+1];
-						}
-						client_socket_index--;
-						break; // All done
-					}
-				} else {
+				}
+				// Stream received message.
+				else {
 					buffer[n] = '\0';
 #ifdef DEBUG
 			printf("Received message from fd %d: %s\n", fd, buffer);
 #endif
-					
 					/*
 					 6. Your server does must be a concurrent server (i.e. do not use an iterative server).
 					 */
