@@ -154,12 +154,11 @@ int main(int argc, const char *argv[])
 			if ( FD_ISSET(fd, &readfds) ) {
 				ssize_t n = recv(fd, buffer, BUFFER_SIZE - 1, 0);
 				if ( n == 0 ) {
-					int k;
 #ifdef DEBUG
 					printf("Client on fd %d closed connection\n", fd);
 #endif
 					// Remove fd from client_sockets[] array:
-					for ( k=0; k<client_socket_index; k++ ) {
+					for ( int k=0; k<client_socket_index; k++ ) {
 						if ( fd == client_sockets[k] ) {
 							// Found it -- copy remaining elements over fd
 							for ( int m=k; m<client_socket_index-1; m++ ) {
