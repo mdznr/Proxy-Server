@@ -67,7 +67,11 @@ void *handleRequest(void *argument)
 	if ( !request ) {
 		// Send back HTTP Error.
 		sendHTTPStatusToSocket(error, fd);
-		goto fail;
+		
+		// Increment number of (purposefully) errored requests.
+		incrementNumberOfErroredRequests();
+		
+		goto end;
 	}
 	
 	/*
@@ -87,7 +91,7 @@ void *handleRequest(void *argument)
 		
 		// Increment filtered requests counter.
 		incrementNumberOfFilteredRequests();
-		goto fail;
+		goto end;
 	} else {
 		// Print Request Line.
 		printf("%s: %s\n", ip_addr, request[HTTPRequestHeaderField_Request_Line]);
@@ -100,7 +104,7 @@ void *handleRequest(void *argument)
 	int serverSocket = socket(PF_INET, SOCK_STREAM, 0);
 	if ( serverSocket < 0 ) {
 		perror("socket()");
-		goto fail;
+		goto end;
 	}
 	
 	// Server
@@ -110,7 +114,7 @@ void *handleRequest(void *argument)
 	struct hostent *hp = gethostbyname(request[HTTPRequestHeaderField_Host]);
 	if ( hp == NULL ) {
 		perror("Unknown host");
-		goto fail;
+		goto end;
 	}
 	
 	// Could also use memcpy
@@ -121,7 +125,7 @@ void *handleRequest(void *argument)
 	// Connect.
 	if ( connect(serverSocket, (struct sockaddr *)&server, sizeof(server) ) < 0 ) {
 		perror("connect()");
-		goto fail;
+		goto end;
 	}
 	
 	// Strip out Accept-Encoding to prevent chunking (not yet supported).
@@ -134,14 +138,14 @@ void *handleRequest(void *argument)
 	// Get the request string.
 	char *serverRequestString = requestStringFromRequest(request);
 	if ( !serverRequestString ) {
-		goto fail;
+		goto end;
 	}
 	
 	// Send.
 	ssize_t send_n = send(serverSocket, serverRequestString, strlen(serverRequestString), 0);
 	if ( send_n < strlen(serverRequestString) ) {
 		perror("send()");
-		goto fail;
+		goto end;
 	}
 	
 	// Buffer to load received messages into.
@@ -157,7 +161,7 @@ void *handleRequest(void *argument)
 		} else if ( received_n < 0 ) {
 			// Error.
 			perror("recv()");
-			goto fail;
+			goto end;
 		} else {
 			// End the buffer with a null-terminator.
 			buffer[received_n] = '\0';
@@ -170,12 +174,15 @@ void *handleRequest(void *argument)
 			ssize_t send_client_n = send(fd, buffer, strlen(buffer), 0);
 			if ( send_client_n < strlen(buffer) ) {
 				perror("send()");
-				goto fail;
+				goto end;
 			}
 		}
 	}
+	
+	// Increment number of successful requests.
+	incrementNumberOfSuccessfulRequests();
 		
-fail:
+end:
 	
 	if ( requestString ) {
 		free(requestString);
