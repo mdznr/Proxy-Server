@@ -23,7 +23,6 @@
 #include "Filters.h"
 #include "StringFunctions.h"
 
-#warning Should this be 1024 and handle chunking?
 #define BUFFER_SIZE 2048
 
 #pragma mark - Private API (Prototypes)
@@ -67,7 +66,7 @@ void *handleRequest(void *argument)
 	if ( !request ) {
 		// Send back HTTP Error.
 		sendHTTPStatusToSocket(error, fd);
-		goto end;
+		goto fail;
 	}
 	
 	/*
@@ -84,7 +83,7 @@ void *handleRequest(void *argument)
 		
 		// Send back HTTP Error 403 Forbidden.
 		sendHTTPStatusToSocket(403, fd);
-		goto end;
+		goto fail;
 	} else {
 		// Print Request Line.
 		printf("%s: %s\n", ip_addr, request[HTTPRequestHeaderField_Request_Line]);
@@ -97,8 +96,7 @@ void *handleRequest(void *argument)
 	int serverSocket = socket(PF_INET, SOCK_STREAM, 0);
 	if ( serverSocket < 0 ) {
 		perror("socket()");
-#warning Do not use gotos?
-		goto end;
+		goto fail;
 	}
 	
 	// Server
@@ -108,7 +106,7 @@ void *handleRequest(void *argument)
 	struct hostent *hp = gethostbyname(request[HTTPRequestHeaderField_Host]);
 	if ( hp == NULL ) {
 		perror("Unknown host");
-		goto end;
+		goto fail;
 	}
 	
 	// Could also use memcpy
@@ -119,7 +117,7 @@ void *handleRequest(void *argument)
 	// Connect.
 	if ( connect(serverSocket, (struct sockaddr *)&server, sizeof(server) ) < 0 ) {
 		perror("connect()");
-		goto end;
+		goto fail;
 	}
 	
 	// Strip out Accept-Encoding to prevent chunking (not yet supported).
@@ -132,14 +130,14 @@ void *handleRequest(void *argument)
 	// Get the request string.
 	char *serverRequestString = requestStringFromRequest(request);
 	if ( !serverRequestString ) {
-		goto end;
+		goto fail;
 	}
 	
 	// Send.
 	ssize_t send_n = send(serverSocket, serverRequestString, strlen(serverRequestString), 0);
 	if ( send_n < strlen(serverRequestString) ) {
 		perror("send()");
-		goto end;
+		goto fail;
 	}
 	
 	// Buffer to load received messages into.
@@ -155,7 +153,7 @@ void *handleRequest(void *argument)
 		} else if ( received_n < 0 ) {
 			// Error.
 			perror("recv()");
-			goto end;
+			goto fail;
 		} else {
 			// End the buffer with a null-terminator.
 			buffer[received_n] = '\0';
@@ -168,12 +166,12 @@ void *handleRequest(void *argument)
 			ssize_t send_client_n = send(fd, buffer, strlen(buffer), 0);
 			if ( send_client_n < strlen(buffer) ) {
 				perror("send()");
-				goto end;
+				goto fail;
 			}
 		}
 	}
 		
-end:
+fail:
 	
 	if ( requestString ) {
 		free(requestString);
@@ -221,7 +219,6 @@ HTTPRequest processRequest(char *requestString, int *error)
 		
 		// Advance the parse pointer to the end of the line, and after the delimiter.
 		parse = next + strlen(delimiter);
-#warning Sometimes an issue where \n appears at the beginning of the line.
 		
 		// Stop when at the end of the header.
 		if ( line == NULL ) {
@@ -251,20 +248,15 @@ HTTPRequest processRequest(char *requestString, int *error)
 				return false;
 			}
 			
-#warning TODO: Make a relative request URI.
-			char *Relative_Request_URI = Request_URI;
-			
-			
-			unsigned long valueLength = strlen(Method) + 1 + strlen(Relative_Request_URI) + 1 + strlen(HTTP_Version) + 1;
+			unsigned long valueLength = strlen(Method) + 1 + strlen(Request_URI) + 1 + strlen(HTTP_Version) + 1;
 			char *value = malloc(sizeof(char) * valueLength);
 			strcpy(value, Method);
 			strcat(value, " ");
-			strcat(value, Relative_Request_URI);
+			strcat(value, Request_URI);
 			strcat(value, " ");
 			strcat(value, HTTP_Version);
 			value[valueLength-1] = '\0';
 			
-#warning Do not hard-code "GET", "HEAD", and "POST".
 			if ( stringEquality(Method, "GET") ) {
 				request[HTTPRequestHeaderField_Request_Line] = value;
 			} else if ( stringEquality(Method, "HEAD")) {
