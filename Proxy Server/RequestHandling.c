@@ -23,7 +23,7 @@
 #include "StringFunctions.h"
 
 #warning Should this be 1024 and handle chunking?
-#define RECEIVED_MESSAGE_BUFFER_SIZE 2048
+#define BUFFER_SIZE 2048
 
 #pragma mark - Private API (Prototypes)
 
@@ -50,25 +50,22 @@ bool shouldAllowServer(const char *server);
 bool sendHTTPStatusToSocket(int status, int client);
 
 
-#pragma mark - Public API Implementation
+#pragma mark - Public API (Implementation)
 
 void *handleRequest(void *argument)
 {
 	// Unpack argument into variables.
 	sock_msg *arg = (sock_msg *)argument;
-	int sock = arg->sock;
+	int fd = arg->sock;
 	struct sockaddr_in client = arg->address;
 	char *requestString = arg->msg;
-	
-	// Read the IP Address into a string.
-	char *ip_addr = inet_ntoa((struct in_addr)client.sin_addr);
 	
 	// Process the request string into a HTTPRequest.
 	int error = 0;
 	HTTPRequest request = processRequest(requestString, &error);
 	if ( !request ) {
 		// Send back HTTP Error.
-		sendHTTPStatusToSocket(error, sock);
+		sendHTTPStatusToSocket(error, fd);
 		goto end;
 	}
 	
@@ -76,13 +73,16 @@ void *handleRequest(void *argument)
 	 When your server detects a request that should be filtered, your server should return an HTTP error 403 (forbidden), which means you need to send back an HTTP status line that indicates an error.
 	 */
 	
+	// Read the IP Address into a string.
+	char *ip_addr = inet_ntoa((struct in_addr)client.sin_addr);
+	
 	// Figure out if the request should be filtered out.
 	if ( !shouldAllowRequest(request) ) {
 		// Print Request Line [FILTERED].
 		printf("%s: %s [FILTERED]\n", ip_addr, request[HTTPRequestHeaderField_Request_Line]);
 		
 		// Send back HTTP Error 403 Forbidden.
-		sendHTTPStatusToSocket(403, sock);
+		sendHTTPStatusToSocket(403, fd);
 		goto end;
 	} else {
 		// Print Request Line.
@@ -93,6 +93,7 @@ void *handleRequest(void *argument)
 	 Your server must forward the appropriate HTTP request headers to the requested server, then send the responses back to the client.
 	 */
 	
+	/*
 	// Modify request string to remove host from request uri.
 	char *serverRequestString = strdup(requestString);
 	char *firstSpace = strchr(serverRequestString, (int) ' ') + 1;
@@ -106,6 +107,7 @@ void *handleRequest(void *argument)
 		thirdSlash = secondSpace;
 	}
 	strcpy(firstSpace, thirdSlash);
+	*/
 	
 	int serverSocket = socket(PF_INET, SOCK_STREAM, 0);
 	if ( serverSocket < 0 ) {
@@ -135,6 +137,19 @@ void *handleRequest(void *argument)
 		goto end;
 	}
 	
+	// Strip out Accept-Encoding to prevent chunking (not yet supported).
+	char *accept_encoding = request[HTTPRequestHeaderField_Accept_Encoding];
+	if ( accept_encoding != NULL ) {
+		free(accept_encoding);
+		request[HTTPRequestHeaderField_Accept_Encoding] = NULL;
+	}
+	
+	// Get the request string.
+	char *serverRequestString = requestStringFromRequest(request);
+	if ( !serverRequestString ) {
+		goto end;
+	}
+	
 	// Send.
 	ssize_t send_n = send(serverSocket, serverRequestString, strlen(serverRequestString), 0);
 	if ( send_n < strlen(serverRequestString) ) {
@@ -143,12 +158,12 @@ void *handleRequest(void *argument)
 	}
 	
 	// Buffer to load received messages into.
-	char buffer[RECEIVED_MESSAGE_BUFFER_SIZE];
+	char buffer[BUFFER_SIZE];
 	
 	// Receive.
 	while (1) {
 		// BLOCK
-		ssize_t received_n = recv(serverSocket, buffer, RECEIVED_MESSAGE_BUFFER_SIZE - 1, 0);
+		ssize_t received_n = recv(serverSocket, buffer, BUFFER_SIZE - 1, 0);
 		if ( received_n == 0 ) {
 			// Peer has closed its half side of the (TCP) connection.
 			break;
@@ -162,10 +177,10 @@ void *handleRequest(void *argument)
 			
 #ifdef DEBUG
 			// Print out the received message.
-			printf("\n\nReceived message from %s:\n%s\n\n", inet_ntoa((struct in_addr)server.sin_addr), buffer);
+			//printf("\n\nReceived message from %s:\n%s\n\n", inet_ntoa((struct in_addr)server.sin_addr), buffer);
 #endif
 			
-			ssize_t send_client_n = send(sock, buffer, strlen(buffer), 0);
+			ssize_t send_client_n = send(fd, buffer, strlen(buffer), 0);
 			if ( send_client_n < strlen(buffer) ) {
 				perror("send()");
 				goto end;
@@ -175,6 +190,14 @@ void *handleRequest(void *argument)
 		
 end:
 	
+	if ( requestString ) {
+		free(requestString);
+	}
+	
+	if ( serverRequestString ) {
+		free(serverRequestString);
+	}
+	
 	close(serverSocket);
 	
 	if ( request != NULL ) {
@@ -183,7 +206,7 @@ end:
 	}
 	
 	// The socket is no longer needed.
-	close(sock);
+	close(fd);
 	
 	// Use this to return message back to calling thread and terminate.
 	pthread_exit(NULL);
@@ -293,7 +316,7 @@ HTTPRequest processRequest(char *requestString, int *error)
 		
 #ifdef DEBUG
 		// Print the line.
-		printf("%s\n", line);
+		//printf("%s\n", line);
 #endif
 	}
 	

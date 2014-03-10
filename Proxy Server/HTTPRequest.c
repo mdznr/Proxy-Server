@@ -93,36 +93,79 @@ char *requestStringFromRequest(HTTPRequest request)
 		return NULL;
 	}
 	
-#warning TODO: modify request line.
+	// Modify request string to remove host from request uri.
+	char *modifiedRequestLine = strdup(requestLine);
+	char *URI_Start = strchr(modifiedRequestLine, (int) ' ') + 1;
+	char *URI_Base_End = requestLine;
+	URI_Base_End = strchr(URI_Base_End, (int) '/') + 1;
+	URI_Base_End = strchr(URI_Base_End, (int) '/') + 1;
+	URI_Base_End = strchr(URI_Base_End, (int) '/');
+	if ( URI_Base_End == NULL ) {
+		// Find the second space and then add '/' manually.
+		char *secondSpace = strchr(modifiedRequestLine, (int) ' ');
+		strcpy(URI_Start, "/");
+		URI_Base_End = secondSpace;
+	}
+	strcpy(URI_Start, URI_Base_End);
+	free(requestLine);
+	requestLine = modifiedRequestLine;
+	request[HTTPRequestHeaderField_Request_Line] = requestLine;
 	
+	// Start with the requestLine.
 	char *string = strdup(requestLine);
 	
-	for ( int i=0; i<HTTPRequestHeaderFieldsCount; ++i ) {
+	for ( int field=0; field<HTTPRequestHeaderFieldsCount; ++field ) {
 		// Skip the request line.
-		if ( i == HTTPRequestHeaderField_Request_Line ) {
+		if ( field == HTTPRequestHeaderField_Request_Line ) {
 			continue;
 		}
 		
-		char *line = request[i];
-		if ( line ) {
-			unsigned long newLength = strlen(string) + strlen("\r\n") + strlen(line);
-			char *biggerString = malloc(sizeof(char) * (newLength + 1));
-			strcpy(biggerString, string);
-			free(string);
-			strcat(biggerString, "\r\n");
-			strcat(biggerString, line);
-			string = biggerString;
+		// Get the value of the field.
+		char *fieldValue = request[field];
+		if ( fieldValue == NULL || strlen(fieldValue) < 1 ) {
+			// The field does not have a value, skip.
+			continue;
 		}
+		
+		// Get the name of the field.
+		const char *fieldName = HTTPRequestHeaderFieldNameForField(field);
+		
+		// Find length of a new string.
+		unsigned long newLength = strlen(string) + strlen("\r\n") + strlen(fieldName) + strlen(": ") + strlen(fieldValue) + 1;
+		// Allocate new string.
+		char *newString = malloc(sizeof(char) * newLength);
+		// Copy over original string.
+		strcpy(newString, string);
+		// Original string is no longer needed.
+		free(string);
+		// Add a carriage return and a newline.
+		strcat(newString, "\r\n");
+		// Add the field name.
+		strcat(newString, fieldName);
+		// Add a colon and a space separator.
+		strcat(newString, ": ");
+		// Add the field value.
+		strcat(newString, fieldValue);
+		
+		// Point string to the new string.
+		string = newString;
 	}
 	
-	// End of message.
-	unsigned long newLength = strlen(string) + strlen("\r\n\r\n");
-	char *biggerString = malloc(sizeof(char) * (newLength + 1));
-	strcpy(biggerString, string);
-	strcat(biggerString, "\r\n\r\n");
+	// End the request.
+	// Find the required length of the buffer.
+	unsigned long newLength = strlen(string) + strlen("\r\n\r\n") + 1;
+	// Allocate the new string.
+	char *newString = malloc(sizeof(char) * newLength);
+	// Copy the string over.
+	strcpy(newString, string);
+	// Add the carriage returns and newlines.
+	strcat(newString, "\r\n\r\n");
+	// The old string is no longer necessary.
 	free(string);
-	string = biggerString;
+	// Point string to the new one.
+	string = newString;
 	
+	// Return the full request string.
 	return string;
 }
 

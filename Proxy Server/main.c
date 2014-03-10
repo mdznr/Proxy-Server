@@ -86,12 +86,10 @@ int main(int argc, const char *argv[])
 	struct sockaddr_in server;
 	server.sin_family = PF_INET;
 	server.sin_addr.s_addr = INADDR_ANY;
-	
-	// htons() is host-to-network-short for marshalling.
-	// Internet is "big endian"; Intel is "little endian".
 	server.sin_port = htons(port);
-	int len = sizeof(server);
 	
+	// Bind.
+	socklen_t len = sizeof(server);
 	if ( bind(sock, (struct sockaddr *) &server, len) < 0 ) {
 		perror("bind()");
 		exit(1);
@@ -99,111 +97,54 @@ int main(int argc, const char *argv[])
 	
 	// Create the client.
 	struct sockaddr_in client;
-	unsigned int fromlen = sizeof(client);
+	socklen_t fromlen = sizeof(client);
 	listen(sock, 5); // 5 is the number of backlogged waiting clients.
 	printf("Listener socket created and bound to port %d\n", port);
-	
-	// Client sockets
-	int client_sockets[MAX_CLIENTS]; // Client socket fd list
-	int client_socket_index = 0;     // Next free spot
-	
-	// Buffer for receiving messages
-	char buffer[BUFFER_SIZE];
 	
 	// Threads
 	pthread_t tid[MAX_THREADS];
 	
-	while (true)
-	{
-		struct timeval timeout;
-		timeout.tv_sec = 3;
-		timeout.tv_usec = 500;  // AND 500 microseconds
+	// Keep taking requests from client.
+	while (true) {
+		// Accept client connection.
+		int fd = accept(sock, (struct sockaddr *) &client, &fromlen);
 		
-		fd_set readfds;
-		FD_ZERO(&readfds);
-		FD_SET(sock, &readfds);
 #ifdef DEBUG
-		printf("Set FD_SET to include listener fd %d\n", sock);
+		printf("Accepted client connection on fd: %d\n", fd);
 #endif
 		
-		for ( int i=0; i<client_socket_index; ++i ) {
-			FD_SET(client_sockets[i], &readfds);
-#ifdef DEBUG
-			printf("Set FD_SET to include client socket fd %d\n", client_sockets[i]);
-#endif
-		}
+		// Create a buffer to read the message into.
+		char buffer[BUFFER_SIZE];
 		
-		// The number of ready file descriptors
-		int q = select(FD_SETSIZE, &readfds, NULL, NULL, &timeout);
-		if ( q == 0 ) {
-			//printf("No activity\n");
+		// Receive the message.
+		ssize_t n = recv(fd, buffer, BUFFER_SIZE - 1, 0);
+		// Check recv() return value.
+		
+		// Stream has errored or ended.
+		if ( n <= 0 ) {
+			// Errored.
+			perror("recv()");
 			continue;
+		} else {
+			// Stream received message.
+			buffer[n] = '\0';
+#ifdef DEBUG
+			//printf("Received message from fd %d: %s\n", fd, buffer);
+#endif
 		}
 		
-		if ( FD_ISSET(sock, &readfds) ) {
-			// We know that this accept() call will NOT block.
-			int newsock = accept(sock, (struct sockaddr *)&client, &fromlen);
-#ifdef DEBUG
-			printf("Accepted client connection\n");
-#endif
-			client_sockets[client_socket_index++] = newsock;
-		}
+		/*
+		 6. Your server does must be a concurrent server (i.e. do not use an iterative server).
+		 */
 		
-		for ( int i=0; i<client_socket_index; ++i ) {
-			int fd = client_sockets[i];
-			if ( FD_ISSET(fd, &readfds) ) {
-				ssize_t n = recv(fd, buffer, BUFFER_SIZE - 1, 0);
-				// Check recv() return value.
-				
-				// Stream has errored or ended.
-				if ( n <= 0 ) {
-					// Ended gracefully.
-					if ( n == 0 ) {
-#ifdef DEBUG
-						printf("Client on fd %d closed connection\n", fd);
-#endif
-					}
-					// Errored.
-					else {
-						perror("recv()");
-					}
-					
-					// Close fd
-					close(fd);
-					
-					// Remove fd from client_sockets[] array:
-					for ( int k=0; k<client_socket_index; k++ ) {
-						if ( fd == client_sockets[k] ) {
-							// Found it. Copy the remaining elements over fd.
-							for ( int m=k; m<client_socket_index-1; m++ ) {
-								client_sockets[m] = client_sockets[m+1];
-							}
-							client_socket_index--;
-							break;  // All done
-						}
-					}
-					
-				}
-				// Stream received message.
-				else {
-					buffer[n] = '\0';
-#ifdef DEBUG
-			printf("Received message from fd %d: %s\n", fd, buffer);
-#endif
-					/*
-					 6. Your server does must be a concurrent server (i.e. do not use an iterative server).
-					 */
-					
-					// Create a thread to handle message.
-					sock_msg *arg = malloc(sizeof(sock_msg));
-					arg->sock = fd;
-					arg->address = server;
-					arg->msg = buffer;
-					if ( pthread_create(&tid[i], NULL, handleRequest, (void *) arg) != 0 ) {
-						perror("Could not create thread.");
-					}
-				}
-			}
+		// Create a thread to handle message.
+		sock_msg *arg = malloc(sizeof(sock_msg));
+		arg->sock = fd;
+		arg->address = server;
+		arg->msg = strdup(buffer);
+		if ( pthread_create(&tid[fd], NULL, handleRequest, (void *) arg) != 0 ) {
+			perror("Could not create thread.");
+			free(arg->msg);
 		}
 	}
 	
