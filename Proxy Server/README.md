@@ -1,5 +1,5 @@
 # How to compile:
--Wall -Wno-unknown-pragmas -std=c99 -pthread -D_GNU_SOURCE *.c -o proxyi
+gcc -Wall -Wno-unknown-pragmas -std=c99 -pthread -D_GNU_SOURCE *.c -o proxy
 
 # Browsers:
 Safari (OS X)
