@@ -12,6 +12,7 @@
 #include "SignalHandling.h"
 
 #include "Filters.h"
+#include "Statistics.h"
 
 /*
  When your server receives a SIGUSR1 signal, your server should output a summary of what
@@ -46,8 +47,6 @@ void handleSIGUSR1()
 	printf("Received SIGUSR1...reporting status:\n");
 	
 	// Report the number of requests.
-#warning keep track of the number of successful requests;
-	unsigned int numberOfSuccessfulRequests = 0;
 	printf("-- Processed %d requests successfully.\n", numberOfSuccessfulRequests);
 	
 	// Report the filters being used.
@@ -57,13 +56,9 @@ void handleSIGUSR1()
 	}
 	
 	// Report the number of filtered requests.
-#warning keep track of the number of filtered requests.
-	unsigned int numberOfFilteredRequests = 0;
 	printf("-- Filtered %d requests.\n", numberOfFilteredRequests);
 	
 	// Report the number of requests that resulted in errors.
-#warning keep track of the number of errored requests.
-	unsigned int numberOfErroredRequests = 0;
 	printf("-- Encountered %d requests in error\n", numberOfErroredRequests);
 }
 

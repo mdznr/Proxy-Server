@@ -21,6 +21,7 @@
 #include "RequestHandling.h"
 
 #include "Filters.h"
+#include "Statistics.h"
 #include "StringFunctions.h"
 
 #define BUFFER_SIZE 2048
@@ -83,6 +84,9 @@ void *handleRequest(void *argument)
 		
 		// Send back HTTP Error 403 Forbidden.
 		sendHTTPStatusToSocket(403, fd);
+		
+		// Increment filtered requests counter.
+		incrementNumberOfFilteredRequests();
 		goto fail;
 	} else {
 		// Print Request Line.

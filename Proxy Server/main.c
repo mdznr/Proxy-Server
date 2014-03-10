@@ -24,8 +24,9 @@
 #include <sys/types.h>
 
 #include "Boolean.h"
-#include "Filters.h"
 #include "MutexLock.h"
+#include "Filters.h"
+#include "Statistics.h"
 #include "RequestHandling.h"
 #include "SignalHandling.h"
 #include "StringFunctions.h"
@@ -102,6 +103,11 @@ int main(int argc, const char *argv[])
 	
 	// Threads
 	pthread_t tid[MAX_THREADS];
+	
+	// Statistics
+	numberOfSuccessfulRequests = 0;
+	numberOfFilteredRequests = 0;
+	numberOfErroredRequests = 0;
 	
 	// Keep taking requests from client.
 	while (true) {

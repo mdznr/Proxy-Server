@@ -11,6 +11,7 @@
 		C960503F18C2B0DE00B47D10 /* StringFunctions.c in Sources */ = {isa = PBXBuildFile; fileRef = C960503E18C2B0DE00B47D10 /* StringFunctions.c */; };
 		C960504218C2CE5F00B47D10 /* HTTPResponse.c in Sources */ = {isa = PBXBuildFile; fileRef = C960504118C2CE5F00B47D10 /* HTTPResponse.c */; };
 		C960504918C2D14400B47D10 /* RequestHandling.c in Sources */ = {isa = PBXBuildFile; fileRef = C960504818C2D14400B47D10 /* RequestHandling.c */; };
+		C97CEA3F18CD80E300D0B530 /* Statistics.c in Sources */ = {isa = PBXBuildFile; fileRef = C97CEA3E18CD80E300D0B530 /* Statistics.c */; };
 		C9DFC74218B652F300C551ED /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = C9DFC74118B652F300C551ED /* main.c */; };
 		C9DFC74418B652F300C551ED /* Proxy_Server.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = C9DFC74318B652F300C551ED /* Proxy_Server.1 */; };
 		C9DFC74D18B667BE00C551ED /* SignalHandling.c in Sources */ = {isa = PBXBuildFile; fileRef = C9DFC74C18B667BE00C551ED /* SignalHandling.c */; };
@@ -41,6 +42,8 @@
 		C960504318C2D02200B47D10 /* HTTP.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HTTP.h; sourceTree = "<group>"; };
 		C960504418C2D0D100B47D10 /* RequestHandling.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RequestHandling.h; sourceTree = "<group>"; };
 		C960504818C2D14400B47D10 /* RequestHandling.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = RequestHandling.c; sourceTree = "<group>"; };
+		C97CEA3C18CD7E8300D0B530 /* Statistics.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Statistics.h; sourceTree = "<group>"; };
+		C97CEA3E18CD80E300D0B530 /* Statistics.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = Statistics.c; sourceTree = "<group>"; };
 		C9DFC73E18B652F300C551ED /* Proxy Server */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "Proxy Server"; sourceTree = BUILT_PRODUCTS_DIR; };
 		C9DFC74118B652F300C551ED /* main.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
 		C9DFC74318B652F300C551ED /* Proxy_Server.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = Proxy_Server.1; sourceTree = "<group>"; };
@@ -90,6 +93,15 @@
 			name = Signals;
 			sourceTree = "<group>";
 		};
+		C97CEA3D18CD7E9500D0B530 /* Request Handling */ = {
+			isa = PBXGroup;
+			children = (
+				C960504418C2D0D100B47D10 /* RequestHandling.h */,
+				C960504818C2D14400B47D10 /* RequestHandling.c */,
+			);
+			name = "Request Handling";
+			sourceTree = "<group>";
+		};
 		C9DFC73518B652F300C551ED = {
 			isa = PBXGroup;
 			children = (
@@ -113,8 +125,9 @@
 				C9DFC74A18B6590100C551ED /* Boolean.h */,
 				C9312E3018BF96AF00533CBE /* MutexLock.h */,
 				C908C53418CA819A00D6949B /* Filters.h */,
-				C960504418C2D0D100B47D10 /* RequestHandling.h */,
-				C960504818C2D14400B47D10 /* RequestHandling.c */,
+				C97CEA3C18CD7E8300D0B530 /* Statistics.h */,
+				C97CEA3E18CD80E300D0B530 /* Statistics.c */,
+				C97CEA3D18CD7E9500D0B530 /* Request Handling */,
 				C960504518C2D0DB00B47D10 /* HTTP */,
 				C960504718C2D11200B47D10 /* Signals */,
 				C960504618C2D0E000B47D10 /* Strings */,
@@ -176,6 +189,7 @@
 			files = (
 				C960504218C2CE5F00B47D10 /* HTTPResponse.c in Sources */,
 				C9DFC74D18B667BE00C551ED /* SignalHandling.c in Sources */,
+				C97CEA3F18CD80E300D0B530 /* Statistics.c in Sources */,
 				C960503C18C2AE8F00B47D10 /* HTTPRequest.c in Sources */,
 				C960503F18C2B0DE00B47D10 /* StringFunctions.c in Sources */,
 				C960504918C2D14400B47D10 /* RequestHandling.c in Sources */,
