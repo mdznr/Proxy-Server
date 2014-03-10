@@ -51,10 +51,11 @@ void handleSIGUSR1()
 	
 	// Report the filters being used.
 #warning Print real filters.
-	printf("-- Filtering: doubleclick.com; slashdot.org\n");
+	printf("-- Filtering:");
 	for ( unsigned int i=0; i<*filtersCount; ++i ) {
 		printf(" %s;", filters[i]);
 	}
+	printf("\n");
 	
 	// Report the number of filtered requests.
 	printf("-- Filtered %u requests.\n", numberOfFilteredRequests);
