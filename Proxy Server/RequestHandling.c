@@ -9,6 +9,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <strings.h>
 #include <pthread.h>
 
 #include <arpa/inet.h>
@@ -96,7 +97,7 @@ void *handleRequest(void *argument)
 	int serverSocket = socket(PF_INET, SOCK_STREAM, 0);
 	if ( serverSocket < 0 ) {
 		perror("socket()");
-#warning Don't use gotos?
+#warning Do not use gotos?
 		goto end;
 	}
 	
@@ -220,7 +221,7 @@ HTTPRequest processRequest(char *requestString, int *error)
 		
 		// Advance the parse pointer to the end of the line, and after the delimiter.
 		parse = next + strlen(delimiter);
-#warning There's sometimes an issue where \n appears at the beginning of the line.
+#warning Sometimes an issue where \n appears at the beginning of the line.
 		
 		// Stop when at the end of the header.
 		if ( line == NULL ) {
