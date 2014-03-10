@@ -64,7 +64,7 @@ void handleSIGUSR1()
 	// Report the number of requests that resulted in errors.
 #warning keep track of the number of errored requests.
 	unsigned int numberOfErroredRequests = 0;
-	printf("-- Encountered %d requets in error\n", numberOfErroredRequests);
+	printf("-- Encountered %d requests in error\n", numberOfErroredRequests);
 }
 
 /*
