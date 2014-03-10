@@ -47,19 +47,20 @@ void handleSIGUSR1()
 	printf("Received SIGUSR1...reporting status:\n");
 	
 	// Report the number of requests.
-	printf("-- Processed %d requests successfully.\n", numberOfSuccessfulRequests);
+	printf("-- Processed %u requests successfully.\n", numberOfSuccessfulRequests);
 	
 	// Report the filters being used.
+#warning Print real filters.
 	printf("-- Filtering: doubleclick.com; slashdot.org\n");
 	for ( unsigned int i=0; i<*filtersCount; ++i ) {
 		printf(" %s;", filters[i]);
 	}
 	
 	// Report the number of filtered requests.
-	printf("-- Filtered %d requests.\n", numberOfFilteredRequests);
+	printf("-- Filtered %u requests.\n", numberOfFilteredRequests);
 	
 	// Report the number of requests that resulted in errors.
-	printf("-- Encountered %d requests in error\n", numberOfErroredRequests);
+	printf("-- Encountered %u requests in error\n", numberOfErroredRequests);
 }
 
 /*
