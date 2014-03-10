@@ -22,7 +22,8 @@ void incrementNumberOfSuccessfulRequests()
 void incrementNumberOfFilteredRequests()
 {
 	printf("Incrementing numberOfFilteredRequests: %u\n", *numberOfSuccessfulRequests);
-	SYNCHRONOUS_BLOCK((*numberOfFilteredRequests)++);
+//	SYNCHRONOUS_BLOCK((*numberOfFilteredRequests)++);
+	*numberOfFilteredRequests += 1;
 	printf("Incremented numberOfFilteredRequests: %u\n", *numberOfSuccessfulRequests);
 }
 
