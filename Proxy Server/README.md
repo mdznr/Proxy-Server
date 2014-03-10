@@ -1,5 +1,5 @@
 # How to compile:
-gcc -Wall -Wno-unknown-pragmas -std=c99 -lpthread *.c -o proxy
+-Wall -Wno-unknown-pragmas -std=c99 -lpthread -D_GNU_SOURCE *.c -o proxyi
 
 # Browsers:
 <!-- Specify/list the browser(s) that you used to test your proxy server. -->
