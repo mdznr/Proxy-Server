@@ -105,9 +105,12 @@ int main(int argc, const char *argv[])
 	pthread_t tid[MAX_THREADS];
 	
 	// Statistics
-	numberOfSuccessfulRequests = 0;
-	numberOfFilteredRequests = 0;
-	numberOfErroredRequests = 0;
+	numberOfSuccessfulRequests = malloc(sizeof(unsigned int));
+	*numberOfErroredRequests = 0;
+	numberOfFilteredRequests = malloc(sizeof(unsigned int));
+	*numberOfFilteredRequests = 0;
+	numberOfErroredRequests = malloc(sizeof(unsigned int));
+	*numberOfErroredRequests = 0;
 	
 	// Keep taking requests from client.
 	while (true) {
