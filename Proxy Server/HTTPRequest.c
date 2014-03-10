@@ -201,3 +201,42 @@ HTTPRequestHeaderField HTTPRequestHeaderFieldForFieldNamed(HTTPRequestHeaderFiel
 	// Conversion failed.
 	return -1;
 }
+
+const char *HTTPRequestHeaderFieldNameForField(HTTPRequestHeaderField field)
+{
+	switch (field) {
+		case HTTPRequestHeaderField_Accept: return HTTPRequestHeaderFieldName_Accept;
+		case HTTPRequestHeaderField_Accept_Charset: return HTTPRequestHeaderFieldName_Accept_Charset;
+		case HTTPRequestHeaderField_Accept_Encoding: return HTTPRequestHeaderFieldName_Accept_Encoding;
+		case HTTPRequestHeaderField_Accept_Language: return HTTPRequestHeaderFieldName_Accept_Language;
+		case HTTPRequestHeaderField_Accept_Datetime: return HTTPRequestHeaderFieldName_Accept_Datetime;
+		case HTTPRequestHeaderField_Authorization: return HTTPRequestHeaderFieldName_Authorization;
+		case HTTPRequestHeaderField_Cache_Control: return HTTPRequestHeaderFieldName_Cache_Control;
+		case HTTPRequestHeaderField_Connection: return HTTPRequestHeaderFieldName_Connection;
+		case HTTPRequestHeaderField_Proxy_Connection: return HTTPRequestHeaderFieldName_Proxy_Connection;
+		case HTTPRequestHeaderField_Cookie: return HTTPRequestHeaderFieldName_Cookie;
+		case HTTPRequestHeaderField_Content_Length: return HTTPRequestHeaderFieldName_Content_Length;
+		case HTTPRequestHeaderField_Content_MD5: return HTTPRequestHeaderFieldName_Content_MD5;
+		case HTTPRequestHeaderField_Content_Type: return HTTPRequestHeaderFieldName_Content_Type;
+		case HTTPRequestHeaderField_Date: return HTTPRequestHeaderFieldName_Date;
+		case HTTPRequestHeaderField_Expect: return HTTPRequestHeaderFieldName_Expect;
+		case HTTPRequestHeaderField_From: return HTTPRequestHeaderFieldName_From;
+		case HTTPRequestHeaderField_Host: return HTTPRequestHeaderFieldName_Host;
+		case HTTPRequestHeaderField_If_Match: return HTTPRequestHeaderFieldName_If_Match;
+		case HTTPRequestHeaderField_If_Modified_Since: return HTTPRequestHeaderFieldName_If_Modified_Since;
+		case HTTPRequestHeaderField_If_None_Match: return HTTPRequestHeaderFieldName_If_None_Match;
+		case HTTPRequestHeaderField_If_Range: return HTTPRequestHeaderFieldName_If_Range;
+		case HTTPRequestHeaderField_If_Unmodified_Since: return HTTPRequestHeaderFieldName_If_Unmodified_Since;
+		case HTTPRequestHeaderField_Max_Forwards: return HTTPRequestHeaderFieldName_Max_Forwards;
+		case HTTPRequestHeaderField_Origin: return HTTPRequestHeaderFieldName_Origin;
+		case HTTPRequestHeaderField_Pragma: return HTTPRequestHeaderFieldName_Pragma;
+		case HTTPRequestHeaderField_Proxy_Authorization: return HTTPRequestHeaderFieldName_Proxy_Authorization;
+		case HTTPRequestHeaderField_Range: return HTTPRequestHeaderFieldName_Range;
+		case HTTPRequestHeaderField_Referer: return HTTPRequestHeaderFieldName_Referer;
+		case HTTPRequestHeaderField_TE: return HTTPRequestHeaderFieldName_TE;
+		case HTTPRequestHeaderField_User_Agent: return HTTPRequestHeaderFieldName_User_Agent;
+		case HTTPRequestHeaderField_Via: return HTTPRequestHeaderFieldName_Via;
+		case HTTPRequestHeaderField_Warning: return HTTPRequestHeaderFieldName_Warning;
+		default: return NULL;
+	}
+}
