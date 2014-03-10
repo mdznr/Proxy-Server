@@ -130,7 +130,6 @@ int main(int argc, const char *argv[])
 		
 		// Stream has errored or ended.
 		if ( n <= 0 ) {
-#warning Sometimes can exit program when a tab that's loading is closed.
 			// Errored.
 			perror("recv()");
 			continue;
