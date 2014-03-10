@@ -362,8 +362,10 @@ bool sendHTTPStatusToSocket(int status, int client)
 	// Create buffer for status string.
 	char *status_str = malloc(sizeof(char) * maxLength);
 	
+	char *HTTP_Version = "HTTP/1.1";
+	
 	// Populate the string.
-	int sprinted = snprintf(status_str, maxLength, "%s %d %s\r\n\r\n", "HTTP/1.1", status, statusStringForStatusCode(status));
+	int sprinted = snprintf(status_str, maxLength, "%s %d %s\r\n\r\n", HTTP_Version, status, statusStringForStatusCode(status));
 	
 	// Check for errors in sprintf.
 	if ( sprinted < 0 ) {
