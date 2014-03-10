@@ -10,19 +10,19 @@
 #define Proxy_Server_Statistics_h
 
 /// The total number of successful requests.
-static unsigned int * numberOfSuccessfulRequests;
+unsigned int *numberOfSuccessfulRequests;
 
 /// Increment @c numberOfSuccessfulRequests atomically.
 void incrementNumberOfSuccessfulRequests();
 
 /// The total number of filtered requests.
-static unsigned int * numberOfFilteredRequests;
+unsigned int *numberOfFilteredRequests;
 
 /// Increment @c numberOfFilteredRequests atomically.
 void incrementNumberOfFilteredRequests();
 
 /// The total number of errored requests.
-static unsigned int * numberOfErroredRequests;
+unsigned int *numberOfErroredRequests;
 
 /// Increment @c numberOfErroredRequests atomically.
 void incrementNumberOfErroredRequests();
