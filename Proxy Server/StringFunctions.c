@@ -13,6 +13,16 @@
 
 #include "Boolean.h"
 
+char *stringDuplicate(const char *str)
+{
+	unsigned long n = strlen(str) + 1;
+	char *dup = malloc(sizeof(char) * n);
+	if ( dup ) {
+		strcpy(dup, str);
+	}
+	return dup;
+}
+
 bool stringEquality(const char *s1, const char *s2)
 {
 	// Strings must be non-NULL.
@@ -25,7 +35,7 @@ bool stringEquality(const char *s1, const char *s2)
 
 char *lowerCaseVersionOfString(const char *s)
 {
-	char *dup = strdup(s);
+	char *dup = stringDuplicate(s);
 	for ( char *p = dup; *p != '\0'; ++p) *p = tolower(*p);
 	return dup;
 }
@@ -144,7 +154,7 @@ bool splitStringAtString(const char *fullString, const char *delimiter, char **f
 	*firstString = substring(fullString, occurance);
 	
 	// The second string is after the occurance of the delimiter.
-	*secondString = strdup(occurance + strlen(delimiter));
+	*secondString = stringDuplicate(occurance + strlen(delimiter));
 	
 	return true;
 }

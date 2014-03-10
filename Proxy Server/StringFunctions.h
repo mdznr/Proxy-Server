@@ -11,6 +11,11 @@
 
 #include "Boolean.h"
 
+/// Duplicate a string.
+/// @param str The string to duplicate.
+/// @return A newly allocated duplicated string.
+char *stringDuplicate(const char *str);
+
 /// Test the equality of two strings.
 /// @param s1 The first string.
 /// @param s2 The second string.
