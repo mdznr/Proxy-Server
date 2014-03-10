@@ -47,10 +47,13 @@ void handleSIGUSR1()
 	printf("Received SIGUSR1...reporting status:\n");
 	
 	// Report the number of requests.
-	printf("-- Processed %u requests successfully.\n", *numberOfSuccessfulRequests);
+	if ( *numberOfSuccessfulRequests == 1 ) {
+		printf("-- Processed %u request successfully.\n", *numberOfSuccessfulRequests);
+	} else {
+		printf("-- Processed %u requests successfully.\n", *numberOfSuccessfulRequests);
+	}
 	
 	// Report the filters being used.
-#warning Print real filters.
 	printf("-- Filtering:");
 	for ( unsigned int i=0; i<*filtersCount; ++i ) {
 		printf(" %s;", filters[i]);
@@ -58,10 +61,18 @@ void handleSIGUSR1()
 	printf("\n");
 	
 	// Report the number of filtered requests.
-	printf("-- Filtered %u requests.\n", *numberOfFilteredRequests);
+	if ( *numberOfFilteredRequests == 1 ) {
+		printf("-- Filtered %u request.\n", *numberOfFilteredRequests);
+	} else {
+		printf("-- Filtered %u requests.\n", *numberOfFilteredRequests);
+	}
 	
 	// Report the number of requests that resulted in errors.
-	printf("-- Encountered %u requests in error\n", *numberOfErroredRequests);
+	if ( *numberOfErroredRequests == 1 ) {
+		printf("-- Encountered %u request in error\n", *numberOfErroredRequests);
+	} else {
+		printf("-- Encountered %u requests in error\n", *numberOfErroredRequests);
+	}
 }
 
 /*
