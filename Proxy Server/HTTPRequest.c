@@ -94,7 +94,7 @@ char *requestStringFromRequest(HTTPRequest request)
 	}
 	
 	// Modify request string to remove host from request uri.
-	char *modifiedRequestLine = strdup(requestLine);
+	char *modifiedRequestLine = stringDuplicate(requestLine);
 	char *URI_Start = strchr(modifiedRequestLine, (int) ' ') + 1;
 	char *URI_Base_End = requestLine;
 	URI_Base_End = strchr(URI_Base_End, (int) '/') + 1;
@@ -112,7 +112,7 @@ char *requestStringFromRequest(HTTPRequest request)
 	request[HTTPRequestHeaderField_Request_Line] = requestLine;
 	
 	// Start with the requestLine.
-	char *string = strdup(requestLine);
+	char *string = stringDuplicate(requestLine);
 	
 	for ( int field=0; field<HTTPRequestHeaderFieldsCount; ++field ) {
 		// Skip the request line.

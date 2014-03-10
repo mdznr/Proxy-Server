@@ -141,7 +141,7 @@ int main(int argc, const char *argv[])
 		sock_msg *arg = malloc(sizeof(sock_msg));
 		arg->sock = fd;
 		arg->address = server;
-		arg->msg = strdup(buffer);
+		arg->msg = stringDuplicate(buffer);
 		if ( pthread_create(&tid[fd], NULL, handleRequest, (void *) arg) != 0 ) {
 			perror("Could not create thread.");
 			free(arg->msg);

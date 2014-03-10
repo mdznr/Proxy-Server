@@ -93,22 +93,6 @@ void *handleRequest(void *argument)
 	 Your server must forward the appropriate HTTP request headers to the requested server, then send the responses back to the client.
 	 */
 	
-	/*
-	// Modify request string to remove host from request uri.
-	char *serverRequestString = strdup(requestString);
-	char *firstSpace = strchr(serverRequestString, (int) ' ') + 1;
-	char *thirdSlash = strchr(requestString, (int) '/') + 1;
-	thirdSlash = strchr(thirdSlash, (int) '/') + 1;
-	thirdSlash = strchr(thirdSlash, (int) '/');
-	if ( thirdSlash == NULL ) {
-		// Find the second space and then add '/' manually.
-		char *secondSpace = strchr(serverRequestString, (int) ' ');
-		strcpy(firstSpace, "/");
-		thirdSlash = secondSpace;
-	}
-	strcpy(firstSpace, thirdSlash);
-	*/
-	
 	int serverSocket = socket(PF_INET, SOCK_STREAM, 0);
 	if ( serverSocket < 0 ) {
 		perror("socket()");
