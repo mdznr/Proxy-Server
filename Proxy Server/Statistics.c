@@ -8,21 +8,21 @@
 
 #include <stdio.h>
 
-#include <libkern/OSAtomic.h>
-
 #include "Statistics.h"
+
+#include "MutexLock.h"
 
 void incrementNumberOfSuccessfulRequests()
 {
-	OSAtomicAdd32(1, &numberOfSuccessfulRequests);
+	SYNCHRONOUS_BLOCK(numberOfSuccessfulRequests++);
 }
 
 void incrementNumberOfFilteredRequests()
 {
-	OSAtomicAdd32(1, &numberOfFilteredRequests);
+	SYNCHRONOUS_BLOCK(numberOfFilteredRequests++);
 }
 
 void incrementNumberOfErroredRequests()
 {
-	OSAtomicAdd32(1, &numberOfErroredRequests);
+	SYNCHRONOUS_BLOCK(numberOfErroredRequests++);
 }
