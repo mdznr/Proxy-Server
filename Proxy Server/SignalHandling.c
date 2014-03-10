@@ -7,6 +7,7 @@
 //
 
 #include <stdio.h>
+#include <stdlib.h>
 
 #include "SignalHandling.h"
 
@@ -75,6 +76,6 @@ void handleSIGUSR1()
  */
 void handleSIGUSR2()
 {
-#warning handleSIGUSR2;
 	printf("Received SIGUSR2...");
+	exit(1);
 }
