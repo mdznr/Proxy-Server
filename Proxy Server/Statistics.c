@@ -21,15 +21,14 @@ void incrementNumberOfSuccessfulRequests()
 
 void incrementNumberOfFilteredRequests()
 {
-	printf("Incrementing numberOfFilteredRequests: %u\n", *numberOfSuccessfulRequests);
-//	SYNCHRONOUS_BLOCK((*numberOfFilteredRequests)++);
-	*numberOfFilteredRequests += 1;
-	printf("Incremented numberOfFilteredRequests: %u\n", *numberOfSuccessfulRequests);
+	printf("Incrementing numberOfFilteredRequests: %u\n", *numberOfFilteredRequests);
+	SYNCHRONOUS_BLOCK((*numberOfFilteredRequests)++);
+	printf("Incremented numberOfFilteredRequests: %u\n", *numberOfFilteredRequests);
 }
 
 void incrementNumberOfErroredRequests()
 {
-	printf("Incrementing numberOfErroredRequests: %u\n", *numberOfSuccessfulRequests);
+	printf("Incrementing numberOfErroredRequests: %u\n", *numberOfErroredRequests);
 	SYNCHRONOUS_BLOCK((*numberOfErroredRequests)++);
-	printf("Incremented numberOfErroredRequests: %u\n", *numberOfSuccessfulRequests);
+	printf("Incremented numberOfErroredRequests: %u\n", *numberOfErroredRequests);
 }
